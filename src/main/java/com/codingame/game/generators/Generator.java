@@ -1,6 +1,7 @@
 package com.codingame.game.generators;
 
 import com.codingame.game.Constants;
+import com.codingame.game.Coord;
 
 public abstract class Generator {
     protected static int[][] initialGridWalls(int rows, int columns) {
@@ -29,6 +30,10 @@ public abstract class Generator {
 
     protected static int randomColumn(int columns) {
         return (int) (Math.random() * columns);
+    }
+
+    protected static Coord randomCoord(int rows, int columns) {
+        return new Coord(randomColumn(columns), randomRow(rows));
     }
 
     public abstract GridDefinition generate(int rows, int columns);

@@ -8,6 +8,15 @@ public class RandomAgent {
         float p_turn = 0f;
         int cur_dir_id = 0;
 
+        // Read initial input: dimensions, exit, and grid
+        String[] dims = scanner.nextLine().split(" ");
+        int width = Integer.parseInt(dims[0]);
+        int height = Integer.parseInt(dims[1]);
+        scanner.nextLine(); // exit position
+        for (int y = 0; y < height; y++) {
+            scanner.nextLine(); // grid row
+        }
+
         while (true) {
             String input = scanner.nextLine();
             p_turn += p_turn_increase;

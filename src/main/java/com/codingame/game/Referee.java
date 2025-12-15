@@ -3,6 +3,7 @@ package com.codingame.game;
 import java.util.Arrays;
 import java.util.List;
 
+import com.codingame.game.generators.BinarySpacePartitioning;
 import com.codingame.game.generators.GridDefinition;
 import com.codingame.game.generators.RandomGenerator;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
@@ -14,6 +15,28 @@ import com.codingame.gameengine.module.entities.Sprite;
 import com.google.inject.Inject;
 
 
+/**
+ * Referee for the Dungeon game.
+ * 
+ * <h2>Input Protocol</h2>
+ * 
+ * <h3>Initialization Input (sent once at start):</h3>
+ * <pre>
+ * Line 1: WIDTH HEIGHT (grid dimensions, space-separated integers)
+ * Line 2: EXIT_X EXIT_Y (exit/goal position, space-separated integers)
+ * Next HEIGHT lines: ROW (string of 0s and 1s, where 0=wall, 1=floor)
+ * </pre>
+ * 
+ * <h3>Turn Input (sent each turn):</h3>
+ * <pre>
+ * Line 1: PLAYER_X PLAYER_Y (current player position, space-separated integers)
+ * </pre>
+ * 
+ * <h3>Expected Output (each turn):</h3>
+ * <pre>
+ * One of: UP, DOWN, LEFT, RIGHT, STAY
+ * </pre>
+ */
 public class Referee extends AbstractReferee {
 
     @Inject private SoloGameManager<Player> gameManager;
@@ -38,7 +61,7 @@ public class Referee extends AbstractReferee {
     }
 
     private void drawEntities() {
-        Coord goal = game.getGoal();
+        Coord goal = game.getExit();
         goalSprite = graphicEntityModule.createSprite()
                 .setImage(Constants.GOAL_SPRITE)
                 .setX(toX(goal.getX()))
@@ -53,11 +76,16 @@ public class Referee extends AbstractReferee {
                 .setZIndex(2);
     }
 
+    /**
+     * Initializes the game and sends initial input to the player.
+     * <p>
+     * Sends: WIDTH HEIGHT, EXIT_X EXIT_Y, then HEIGHT rows of grid data (0=wall, 1=floor).
+     */
     @Override
     public void init() {
         gameManager.setFrameDuration(300);
 
-        GridDefinition gridDefinition = new RandomGenerator().generate();
+        GridDefinition gridDefinition = new BinarySpacePartitioning().generate();
         game = new DungeonGame(gridDefinition);
 
         drawGrid(gridDefinition.getGrid());
@@ -66,9 +94,25 @@ public class Referee extends AbstractReferee {
         gameManager.getPlayer().sendInputLine(
                 Constants.COLUMNS + " " + Constants.ROWS
         );
-        gameManager.getPlayer().sendInputLine(game.getGoal().toString());
+        gameManager.getPlayer().sendInputLine(game.getExit().toString());
+        
+        // Send grid as rows of 0s and 1s
+        int[][] grid = gridDefinition.getGrid();
+        for (int y = 0; y < Constants.ROWS; y++) {
+            StringBuilder row = new StringBuilder();
+            for (int x = 0; x < Constants.COLUMNS; x++) {
+                row.append(grid[y][x]);
+            }
+            gameManager.getPlayer().sendInputLine(row.toString());
+        }
     }
 
+    /**
+     * Executes a single game turn.
+     * <p>
+     * Sends: PLAYER_X PLAYER_Y (current position).
+     * Expects: One action (UP, DOWN, LEFT, RIGHT, or STAY).
+     */
     @Override
     public void gameTurn(int turn) {
         gameManager.getPlayer().sendInputLine(game.getPlayerPos().toString());

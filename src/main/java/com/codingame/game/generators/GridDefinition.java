@@ -18,7 +18,7 @@ public class GridDefinition {
     private final Coord playerStart = new Coord(0, 0);
 
     @Builder.Default
-    private final Coord goal = new Coord(Constants.COLUMNS - 1, Constants.ROWS - 1);
+    private final Coord exit = new Coord(Constants.COLUMNS - 1, Constants.ROWS - 1);
 
     @Builder.Default
     private final Coord[] enemies = new Coord[0];
@@ -26,9 +26,16 @@ public class GridDefinition {
     public int rows() {
         return grid.length;
     }
-
     public int columns() {
         return grid[0].length;
+    }
+
+    public int getCoordValue(Coord coord) {
+        return grid[coord.getY()][coord.getX()];
+    }
+
+    public void setCoordValue(Coord coord, int value) {
+        grid[coord.getY()][coord.getX()] = value;
     }
 }
 

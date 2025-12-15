@@ -9,12 +9,12 @@ public class DungeonGame {
 
     private final int[][] grid;
     private Coord playerPos;
-    private final Coord goal;
+    private final Coord exit;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
         this.playerPos = def.getPlayerStart();
-        this.goal = def.getGoal();
+        this.exit = def.getExit();
     }
 
     public boolean move(Action action) {
@@ -28,7 +28,7 @@ public class DungeonGame {
     }
 
     public boolean hasWon() {
-        return playerPos.equals(goal);
+        return playerPos.equals(exit);
     }
 
     private boolean isOutOfBounds(Coord c) {
