@@ -8,7 +8,7 @@ There are 2 ways to implement your game turn according to the game you want to c
 ### The simultaneous mode
 It's a game mode where all players receive the game data and execute their actions in the same turn. (eg: Race, Pong, ...)
 
-```java
+```
 for (Player player : gameManager.getActivePlayers()) {
     player.sendInputLine(input);
     player.execute();
@@ -29,7 +29,7 @@ for (Player player : gameManager.getActivePlayers()) {
 ### The Turn by Turn mode:
 It's a game mode where only one player execute an action during a turn. (eg: TicTacToe, Chess)
 
-```java
+```
 SkeletonPlayer player = gameManager.getPlayer(turn % playerCount);
 player.sendInputLine(input);
 player.execute();
@@ -49,6 +49,6 @@ try {
 Assets are expected to be placed in the `src/main/resources/view/assets` folder of your game's project.
 
 You can then use the images in the texture cache with the Entity Module:
-```java
+```
 entityManager.createSprite.setImage("background.jpg");
 ```
