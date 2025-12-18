@@ -5,7 +5,6 @@ public class GreedyAgent {
     private int exitX, exitY;
     private int playerX, playerY;
     private int lastPlayerX = -1, lastPlayerY = -1;
-    private int currentAltDir = 0;
     private int[][] grid;
 
     private void run() {
@@ -43,13 +42,16 @@ public class GreedyAgent {
     }
 
     private String decide() {
-        if (playerX == lastPlayerX && playerY == lastPlayerY && lastPlayerX != -1) {
-            currentAltDir = (currentAltDir + 1) % AgentsUtils.DIRECTIONS.length;
-            return AgentsUtils.DIRECTIONS[currentAltDir];
-        }
-
         int dx = exitX - playerX;
         int dy = exitY - playerY;
+
+        // If stuck, try alternate direction to the goal
+        if (playerX == lastPlayerX && playerY == lastPlayerY && lastPlayerX != -1) {
+            if (dy > 0) return "DOWN";
+            if (dy < 0) return "UP";
+            if (dx > 0) return "RIGHT";
+            if (dx < 0) return "LEFT";
+        }
 
         // Prefer the axis with greater distance
         if (Math.abs(dx) >= Math.abs(dy)) {

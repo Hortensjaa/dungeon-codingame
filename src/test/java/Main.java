@@ -8,7 +8,7 @@ public class Main {
          SoloGameRunner gameRunner = new SoloGameRunner();
 
         // Sets the player
-         gameRunner.setAgent(GreedyAgent.class);
+         gameRunner.setAgent(AstarAgent.class);
 
         // Sets a test case
          gameRunner.setTestCase("test1.json");

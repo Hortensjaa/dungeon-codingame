@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.codingame.game.generators.BinarySpacePartitioning;
 import com.codingame.game.generators.GridDefinition;
-import com.codingame.game.generators.RandomGenerator;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.SoloGameManager;
@@ -47,15 +46,24 @@ public class Referee extends AbstractReferee {
     private Sprite goalSprite;
 
     private void drawGrid(int[][] grid) {
+        // Draw background color (floor color)
+        graphicEntityModule.createRectangle()
+                .setWidth(Constants.VIEWER_WIDTH)
+                .setHeight(Constants.VIEWER_HEIGHT)
+                .setFillColor(0x3d3d3d)
+                .setZIndex(-1);
+
+        // Draw only walls
         for (int y = 0; y < Constants.ROWS; y++) {
             for (int x = 0; x < Constants.COLUMNS; x++) {
-                graphicEntityModule.createSprite()
-                        .setImage(grid[y][x] == Constants.FLOOR
-                                ? Constants.FLOOR_SPRITE
-                                : Constants.WALL_SPRITE)
-                        .setX(toX(x))
-                        .setY(toY(y))
-                        .setZIndex(0);
+                if (grid[y][x] == Constants.WALL) {
+                    graphicEntityModule.createSprite()
+                            .setImage(Constants.WALL_SPRITE)
+                            .setScale(0.5)
+                            .setX(toX(x))
+                            .setY(toY(y))
+                            .setZIndex(0);
+                }
             }
         }
     }
@@ -64,6 +72,7 @@ public class Referee extends AbstractReferee {
         Coord goal = game.getExit();
         goalSprite = graphicEntityModule.createSprite()
                 .setImage(Constants.GOAL_SPRITE)
+                .setScale(0.5)
                 .setX(toX(goal.getX()))
                 .setY(toY(goal.getY()))
                 .setZIndex(1);
@@ -71,6 +80,7 @@ public class Referee extends AbstractReferee {
         Coord player = game.getPlayerPos();
         playerSprite = graphicEntityModule.createSprite()
                 .setImage(Constants.PLAYER_SPRITE)
+                .setScale(0.5)
                 .setX(toX(player.getX()))
                 .setY(toY(player.getY()))
                 .setZIndex(2);

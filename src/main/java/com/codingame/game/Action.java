@@ -1,27 +1,24 @@
 package com.codingame.game;
 
+import lombok.Getter;
+
+@Getter
 public enum Action {
 
-    UP(0, -1),
-    DOWN(0, 1),
-    LEFT(-1, 0),
-    RIGHT(1, 0),
-    STAY(0, 0);
+    UP(0, -1, "UP"),
+    DOWN(0, 1, "DOWN"),
+    LEFT(-1, 0, "LEFT"),
+    RIGHT(1, 0, "RIGHT"),
+    STAY(0, 0, "STAY");
 
     private final int x;
     private final int y;
+    private final String name;
 
-    Action(int x, int y) {
+    Action(int x, int y, String name) {
+        this.name = name;
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public Action opposite() {
