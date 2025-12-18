@@ -89,7 +89,6 @@ public class AstarAgent {
 
         while (!open.isEmpty()) {
             Node cur = open.poll();
-
             if (closed[cur.y][cur.x]) continue;
             closed[cur.y][cur.x] = true;
 
