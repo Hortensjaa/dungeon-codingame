@@ -1,4 +1,5 @@
 import com.codingame.game.Action;
+import com.codingame.game.Constants;
 
 import java.util.Scanner;
 import java.util.*;
@@ -89,7 +90,6 @@ public class AstarAgent {
 
         while (!open.isEmpty()) {
             Node cur = open.poll();
-
             if (closed[cur.y][cur.x]) continue;
             closed[cur.y][cur.x] = true;
 
@@ -105,7 +105,7 @@ public class AstarAgent {
                 int ny = cur.y + action.getY();
 
                 if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
-                if (grid[ny][nx] == 0) continue; // wall
+                if (grid[ny][nx] == Constants.WALL) continue; // wall
                 if (closed[ny][nx]) continue;
 
                 Node next = new Node(
