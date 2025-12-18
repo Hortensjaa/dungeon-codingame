@@ -162,20 +162,6 @@ public class BinarySpacePartitioning extends Generator {
         collectRooms(p.left, out);
         collectRooms(p.right, out);
     }
-
-    private Room getRoom(Partition partition) {
-        if (partition.room != null) {
-            return partition.room;
-        }
-        if (partition.left != null) {
-            Room room = getRoom(partition.left);
-            if (room != null) return room;
-        }
-        if (partition.right != null) {
-            return getRoom(partition.right);
-        }
-        return null;
-    }
     
     /**
      * Creates an L-shaped corridor between two points.
