@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class BinarySpacePartitioning extends Generator {
     
-    private static final int MIN_PARTITION_SIZE = 6;
+    private static final int MIN_PARTITION_SIZE = 5;
     private static final int MIN_ROOM_SIZE = 3;
     private static final int ROOM_PADDING = 1;
     
@@ -65,7 +65,7 @@ public class BinarySpacePartitioning extends Generator {
         if (partition.width < MIN_PARTITION_SIZE * 2 && partition.height < MIN_PARTITION_SIZE * 2) {
             return;
         }
-        
+
         // Decide split direction based on shape
         boolean splitHorizontally;
         if (partition.width < MIN_PARTITION_SIZE * 2) {
@@ -135,8 +135,8 @@ public class BinarySpacePartitioning extends Generator {
         connectPartitions(partition.right);
         
         // Connect left and right subtrees
-        Room leftRoom = getRoom(partition.left);
-        Room rightRoom = getRoom(partition.right);
+        Room leftRoom = getRandomRoom(partition.left);
+        Room rightRoom = getRandomRoom(partition.right);
         
         if (leftRoom != null && rightRoom != null) {
             createCorridor(leftRoom.centerX(), leftRoom.centerY(), 
@@ -147,6 +147,22 @@ public class BinarySpacePartitioning extends Generator {
     /**
      * Gets a room from a partition (or any of its descendants).
      */
+    private Room getRandomRoom(Partition partition) {
+        List<Room> collected = new ArrayList<>();
+        collectRooms(partition, collected);
+        if (collected.isEmpty()) return null;
+        return collected.get((int)(Math.random() * collected.size()));
+    }
+
+    private void collectRooms(Partition p, List<Room> out) {
+        if (p == null) return;
+        if (p.room != null) {
+            out.add(p.room);
+        }
+        collectRooms(p.left, out);
+        collectRooms(p.right, out);
+    }
+
     private Room getRoom(Partition partition) {
         if (partition.room != null) {
             return partition.room;
@@ -166,6 +182,7 @@ public class BinarySpacePartitioning extends Generator {
      */
     private void createCorridor(int x1, int y1, int x2, int y2) {
         // Randomly choose whether to go horizontal-first or vertical-first
+        System.out.println("Creating corridor");
         if (Math.random() < 0.5) {
             createHorizontalCorridor(x1, x2, y1);
             createVerticalCorridor(y1, y2, x2);
