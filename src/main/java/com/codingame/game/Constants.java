@@ -3,9 +3,9 @@ package com.codingame.game;
 
 public class Constants {
 //    grid dimensions
-    public static final int COLUMNS = 30;
-    public static final int ROWS = 17;
-    public static final int CELL_SIZE = 64;
+    public static final int COLUMNS = 60;
+    public static final int ROWS = 34;
+    public static final int CELL_SIZE = 32;
     public static final int VIEWER_WIDTH = COLUMNS * CELL_SIZE;
     public static final int VIEWER_HEIGHT = ROWS * CELL_SIZE;
 
