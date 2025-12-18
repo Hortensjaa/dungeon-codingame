@@ -16,7 +16,7 @@ Some ideas, in order corresponding to how likely it is to be implemented in the 
 4. Potions (add extra life, add mana)
 5. Create optimisation problem out of it (e.g. collect as many coins as you can and then leave dungeon safetly)
 
---- content under this line has really small chance and is more my idea to develop project further into standalone game
+--- content under this line has minimal chance and is more my idea to develop project further into standalone game
 - More advanced stats and types of enemies and player like HP, ATK etc.
 - Collecting items that boost those stats
 
@@ -36,3 +36,33 @@ Probably will include more complicated dungeons, but that isn't the point. Most 
 - https://aeau.github.io/assets/papers/2020/tolFlod2020-chiplay01.pdf (about making sense, not only correct layout - interesting)
 - https://openresearch-repository.anu.edu.au/items/abb3546d-81e0-4d12-aefa-714b1c29cff6 (hybrid approach - grammar + cellular automata)
 - https://pure.ul.ie/en/publications/procedural-content-generation-for-games-using-grammatical-evoluti/ (evolution on grammars) 
+
+## Plan
+- [] Implement agents in CodinGame SDK
+    - [x] Random
+    - [x] Greedy
+    - [x] A* (ignore , minimalise path)
+       - [ ] consider enemies, minimalise risk
+       - [ ] consider enemies and dodging
+       - [.] killer: prefer fighting over dodging
+       - [.] collector: maximise reward (if points added)
+- [ ] Implement dungeon generators in CodinGame SDK
+    - [x] Random
+    - [x] Binary space partitioning
+    - [.] Cellular automata
+    - [ ] add fitness functions for generators
+        - [ ] quality
+        - [ ] diversity
+        - [ ] solvability by different agents
+    - [ ] Map-Elites
+    - [ ] add grammar-based generator
+    - [ ] (goal) implement hybrid generator, with map-elites for grammar rules and then some online algorithm generation,
+- [ ] Add features to dungeons
+    - [ ] enemies
+        - [ ] just standing in place
+        - [ ] movement paths
+        - [.] different types
+    - [ ] dodging enemies with stamina
+    - [.] fighting enemies with mana
+    - [.] potions
+    - [.] collectables
