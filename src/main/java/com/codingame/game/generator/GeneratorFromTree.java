@@ -1,9 +1,9 @@
-package com.codingame.game.generators;
+package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
 import com.codingame.game.move.Coord;
-import com.codingame.game.generators.tree.DungeonTree;
-import com.codingame.game.generators.tree.RoomTypes;
+import com.codingame.game.generator.tree.DungeonTree;
+import com.codingame.game.generator.tree.RoomTypes;
 import com.codingame.game.move.Direction;
 
 public class GeneratorFromTree extends Generator {

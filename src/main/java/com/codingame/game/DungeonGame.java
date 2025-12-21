@@ -1,6 +1,7 @@
 package com.codingame.game;
 
-import com.codingame.game.generators.GridDefinition;
+import com.codingame.game.game_objects.GamePlayer;
+import com.codingame.game.generator.GridDefinition;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
 import lombok.Getter;
@@ -10,27 +11,27 @@ import lombok.Getter;
 public class DungeonGame {
 
     private final int[][] grid;
-    private Coord playerPos;
+    private GamePlayer player;
     private final Coord exit;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
-        this.playerPos = def.getPlayerStart();
+        this.player = new GamePlayer(def.getPlayerStart());
         this.exit = def.getExit();
     }
 
     public boolean move(Action action) {
-        Coord next = playerPos.applyAction(action);
+        Coord next = player.getPosition().applyAction(action);
 
         if (isOutOfBounds(next)) return false;
         if (isWall(next)) return false;
 
-        playerPos = next;
+        player.setPosition(next);
         return true;
     }
 
     public boolean hasWon() {
-        return playerPos.equals(exit);
+        return player.getPosition().equals(exit);
     }
 
     private boolean isOutOfBounds(Coord c) {

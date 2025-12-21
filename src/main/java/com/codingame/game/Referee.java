@@ -3,10 +3,10 @@ package com.codingame.game;
 import java.util.Arrays;
 import java.util.List;
 
-import com.codingame.game.generators.GeneratorFromTree;
-import com.codingame.game.generators.GridDefinition;
-import com.codingame.game.generators.tree.DungeonTree;
-import com.codingame.game.generators.tree.DungeonTreeBuilder;
+import com.codingame.game.generator.GeneratorFromTree;
+import com.codingame.game.generator.GridDefinition;
+import com.codingame.game.generator.tree.DungeonTree;
+import com.codingame.game.generator.tree.DungeonTreeBuilder;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
@@ -16,6 +16,7 @@ import com.codingame.gameengine.module.entities.Curve;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 import com.google.inject.Inject;
+import com.codingame.game.game_objects.GamePlayer;
 
 
 /**
@@ -46,7 +47,6 @@ public class Referee extends AbstractReferee {
     @Inject private GraphicEntityModule graphicEntityModule;
 
     private DungeonGame game;
-    private GamePlayer player = new GamePlayer();
     private Sprite playerSprite;
     private Sprite goalSprite;
 
@@ -87,9 +87,9 @@ public class Referee extends AbstractReferee {
                 .setY(toY(goal.getY()))
                 .setZIndex(1);
 
-        Coord playerCoords = game.getPlayerPos();
+        Coord playerCoords = game.getPlayer().getPosition();
         playerSprite = graphicEntityModule.createSprite()
-                .setImage(player.getCurrentSprite())
+                .setImage(game.getPlayer().getCurrentSprite())
                 .setX(toX(playerCoords.getX()))
                 .setY(toY(playerCoords.getY()))
                 .setZIndex(2);
@@ -140,7 +140,7 @@ public class Referee extends AbstractReferee {
      */
     @Override
     public void gameTurn(int turn) {
-        gameManager.getPlayer().sendInputLine(game.getPlayerPos().toString());
+        gameManager.getPlayer().sendInputLine(game.getPlayer().getPosition().toString());
         gameManager.getPlayer().execute();
 
         try {
@@ -160,9 +160,9 @@ public class Referee extends AbstractReferee {
     }
 
     private void updateView() {
-        Coord p = game.getPlayerPos();
+        Coord p = game.getPlayer().getPosition();
         playerSprite
-                .setImage(player.getCurrentSprite())
+                .setImage(game.getPlayer().getCurrentSprite())
                 .setX(toX(p.getX()), Curve.LINEAR)
                 .setY(toY(p.getY()), Curve.LINEAR);
     }

@@ -1,4 +1,4 @@
-package com.codingame.game.generators.tree;
+package com.codingame.game.generator.tree;
 
 /**
  * Public API to build and configure DungeonTree.

@@ -1,4 +1,4 @@
-package com.codingame.game.generators.tree;
+package com.codingame.game.generator.tree;
 
 import com.codingame.game.move.Direction;
 import lombok.Data;

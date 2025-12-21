@@ -1,4 +1,4 @@
-package com.codingame.game.generators;
+package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
 import com.codingame.game.move.Coord;

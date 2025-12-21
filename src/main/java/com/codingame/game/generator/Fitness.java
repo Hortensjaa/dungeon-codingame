@@ -1,7 +1,7 @@
-package com.codingame.game.generators;
+package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
-import com.codingame.game.generators.tree.DungeonTree;
+import com.codingame.game.generator.tree.DungeonTree;
 
 
 public final class Fitness {

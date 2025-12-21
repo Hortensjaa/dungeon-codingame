@@ -1,4 +1,4 @@
-package com.codingame.game.generators.tree;
+package com.codingame.game.generator.tree;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,9 +8,9 @@ public class RoomTypes {
 
     public static Base getRandomRoom() {
         double r = Math.random();
-        if (r < 0.4) {
+        if (r < 0.5) {
             return new Empty();
-        } else if (r < 0.8) {
+        } else if (r < 0.75) {
             return new Enemies((float) (Math.random()));
         } else {
             return new Treasure((float) (Math.random()));
