@@ -26,10 +26,9 @@ public class Constants {
 
 //    sprites
     public static final String WALL_SPRITE = "assets/walls_32/tile_10.png";
-    public static final String ROOM_SPRITE = "assets/walls_32/tile_8.png";
-    public static final String CORRIDOR_SPRITE = "assets/walls_32/tile_12.png";
-    public static final String PLAYER_SPRITE = "player/player.png";
-    public static final String GOAL_SPRITE = "walls/tile_6.png";
+    public static final String ROOM_SPRITE = "assets/walls_32/tile_11.png";
+    public static final String CORRIDOR_SPRITE = "assets/walls_32/tile_2.png";
+    public static final String GOAL_SPRITE = "walls_32/tile_6.png";
 
 //    actions
     public static final String[] ACTIONS = {

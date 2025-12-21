@@ -45,6 +45,7 @@ public class Referee extends AbstractReferee {
     @Inject private GraphicEntityModule graphicEntityModule;
 
     private DungeonGame game;
+    private GamePlayer player = new GamePlayer();
     private Sprite playerSprite;
     private Sprite goalSprite;
 
@@ -81,17 +82,15 @@ public class Referee extends AbstractReferee {
         Coord goal = game.getExit();
         goalSprite = graphicEntityModule.createSprite()
                 .setImage(Constants.GOAL_SPRITE)
-                .setScale(0.5)
                 .setX(toX(goal.getX()))
                 .setY(toY(goal.getY()))
                 .setZIndex(1);
 
-        Coord player = game.getPlayerPos();
+        Coord playerCoords = game.getPlayerPos();
         playerSprite = graphicEntityModule.createSprite()
-                .setImage(Constants.PLAYER_SPRITE)
-                .setScale(0.5)
-                .setX(toX(player.getX()))
-                .setY(toY(player.getY()))
+                .setImage(player.getCurrentSprite())
+                .setX(toX(playerCoords.getX()))
+                .setY(toY(playerCoords.getY()))
                 .setZIndex(2);
     }
 
@@ -162,6 +161,7 @@ public class Referee extends AbstractReferee {
     private void updateView() {
         Coord p = game.getPlayerPos();
         playerSprite
+                .setImage(player.getCurrentSprite())
                 .setX(toX(p.getX()), Curve.LINEAR)
                 .setY(toY(p.getY()), Curve.LINEAR);
     }
