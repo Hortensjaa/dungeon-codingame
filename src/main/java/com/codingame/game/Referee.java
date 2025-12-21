@@ -16,7 +16,6 @@ import com.codingame.gameengine.module.entities.Curve;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 import com.google.inject.Inject;
-import com.codingame.game.game_objects.GamePlayer;
 
 
 /**
@@ -49,6 +48,7 @@ public class Referee extends AbstractReferee {
     private DungeonGame game;
     private Sprite playerSprite;
     private Sprite goalSprite;
+    private Sprite[] enemySprites;
 
     private void drawGrid(int[][] grid) {
         // Draw background color (floor color)
@@ -93,6 +93,16 @@ public class Referee extends AbstractReferee {
                 .setX(toX(playerCoords.getX()))
                 .setY(toY(playerCoords.getY()))
                 .setZIndex(2);
+
+        enemySprites = new Sprite[game.getEnemies().size()];
+        for (int i = 0; i < game.getEnemies().size(); i++) {
+            Coord enemyCoords = game.getEnemies().get(i).getPosition();
+            enemySprites[i] = graphicEntityModule.createSprite()
+                    .setImage(game.getEnemies().get(i).getCurrentSprite())
+                    .setX(toX(enemyCoords.getX()))
+                    .setY(toY(enemyCoords.getY()))
+                    .setZIndex(1);
+        }
     }
 
     /**
@@ -165,6 +175,10 @@ public class Referee extends AbstractReferee {
                 .setImage(game.getPlayer().getCurrentSprite())
                 .setX(toX(p.getX()), Curve.LINEAR)
                 .setY(toY(p.getY()), Curve.LINEAR);
+
+        for (int i = 0; i < game.getEnemies().size(); i++) {
+            enemySprites[i].setImage(game.getEnemies().get(i).getCurrentSprite());
+        }
     }
 
     private int toX(int x) {

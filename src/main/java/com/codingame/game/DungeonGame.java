@@ -1,23 +1,32 @@
 package com.codingame.game;
 
+import com.codingame.game.game_objects.Enemy;
 import com.codingame.game.game_objects.GamePlayer;
 import com.codingame.game.generator.GridDefinition;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
 import lombok.Getter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Getter
 public class DungeonGame {
 
     private final int[][] grid;
-    private GamePlayer player;
+    private final GamePlayer player;
     private final Coord exit;
+    private final List<Enemy> enemies;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
         this.player = new GamePlayer(def.getPlayerStart());
         this.exit = def.getExit();
+        this.enemies = def.getEnemies().entrySet()
+                .stream()
+                .map(entry -> new Enemy(entry.getValue(), entry.getKey()))
+                .collect(Collectors.toList());
     }
 
     public boolean move(Action action) {

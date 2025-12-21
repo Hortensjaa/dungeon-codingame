@@ -1,10 +1,14 @@
 package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
+import com.codingame.game.game_objects.EnemyType;
 import com.codingame.game.move.Coord;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -21,7 +25,7 @@ public class GridDefinition {
     private final Coord exit = new Coord(Constants.COLUMNS - 1, Constants.ROWS - 1);
 
     @Builder.Default
-    private final Coord[] enemies = new Coord[0];
+    private final Map<Coord, EnemyType> enemies = new HashMap<>();
 
     // methods
     public int rows() {

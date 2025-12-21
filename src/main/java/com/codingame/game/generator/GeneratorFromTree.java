@@ -1,21 +1,46 @@
 package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
+import com.codingame.game.game_objects.EnemyType;
 import com.codingame.game.move.Coord;
 import com.codingame.game.generator.tree.DungeonTree;
 import com.codingame.game.generator.tree.RoomTypes;
 import com.codingame.game.move.Direction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GeneratorFromTree extends Generator {
     DungeonTree tree;
     Coord playerStart;
     Coord exitPoint;
+    Map<Coord, EnemyType> enemies = new HashMap<>();
     int[][] grid;
 
 
     public GeneratorFromTree(DungeonTree dungeonTree) {
         tree = dungeonTree;
     }
+
+    // ------ rooms placement; todo: more interesting placement methods
+    private void placeStart(int x_min, int x_max, int y_min, int y_max) {
+        int centerX = (x_min + x_max) / 2;
+        int centerY = (y_min + y_max) / 2;
+        playerStart = new Coord(centerX, centerY);
+    }
+
+    private void placeExit(int x_min, int x_max, int y_min, int y_max) {
+        int centerX = (x_min + x_max) / 2;
+        int centerY = (y_min + y_max) / 2;
+        exitPoint = new Coord(centerX, centerY);
+    }
+
+    private void placeEnemies(int x_min, int x_max, int y_min, int y_max) {
+        int centerX = (x_min + x_max) / 2;
+        int centerY = (y_min + y_max) / 2;
+        enemies.put(new Coord(centerX, centerY), EnemyType.FIRE);
+    }
+    // -----------------------------------------
 
     private void placeRoomRec(int x_min, int x_max, int y_min, int y_max, DungeonTree node) {
         // base case, ignore null nodes
@@ -27,7 +52,7 @@ public class GeneratorFromTree extends Generator {
         int centerX = (x_min + x_max) / 2;
         int centerY = (y_min + y_max) / 2;
 
-        // room already placed; todo: let's rethink this...
+        // room already placed; todo: let's rethink this... try to split partition?
         if (grid[centerY][centerX] == Constants.ROOM) {
             return;
         }
@@ -41,9 +66,11 @@ public class GeneratorFromTree extends Generator {
 
         // set start and exit points in the center of their rooms; todo: more interesting placement
         if (node.getRoom() instanceof RoomTypes.Start) {
-            playerStart = new Coord(centerX, centerY);
+            placeStart(x_min, x_max, y_min, y_max);
         } else if (node.getRoom() instanceof RoomTypes.Exit) {
-            exitPoint = new Coord(centerX, centerY);
+            placeExit(x_min, x_max, y_min, y_max);
+        } else if (node.getRoom() instanceof RoomTypes.Enemies) {
+            placeEnemies(x_min, x_max, y_min, y_max);
         }
 
         // add enemies, items, etc. todo: will be added later
@@ -127,6 +154,7 @@ public class GeneratorFromTree extends Generator {
                 .grid(grid)
                 .playerStart(playerStart)
                 .exit(exitPoint)
+                .enemies(enemies)
                 .build();
     }
 }
