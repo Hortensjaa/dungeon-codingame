@@ -20,6 +20,10 @@ public class Constants {
     public static final int MIN_ROOM_DIMENSION = 2;  // minimum room width and height in cells
     public static final int MIN_PARTITION_DIMENSION = MIN_ROOM_DIMENSION + 2 * WALL_OFFSET; // minimum partition width and height in cells
 
+//    tree constants
+    public static final int MAX_TREE_WIDTH = COLUMNS / MIN_PARTITION_DIMENSION;
+    public static final int MAX_TREE_HEIGHT = ROWS / MIN_PARTITION_DIMENSION;
+
 //    sprites
     public static final String WALL_SPRITE = "assets/walls_32/tile_10.png";
     public static final String ROOM_SPRITE = "assets/walls_32/tile_8.png";
