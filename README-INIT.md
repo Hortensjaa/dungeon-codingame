@@ -16,6 +16,7 @@ Some ideas, in order corresponding to how likely it is to be implemented in the 
 3. Option of fighting enemies, but with limited mana
 4. Potions (add extra life, add mana)
 5. Create optimisation problem out of it (e.g. collect as many coins as you can and then leave dungeon safetly)
+6. Puzzles of doors (doors that can only be accessed from one side + doors locked by keys)
 
 --- content under this line has minimal chance and is more my idea to develop project further into standalone game
 - More advanced stats and types of enemies and player like HP, ATK etc.
