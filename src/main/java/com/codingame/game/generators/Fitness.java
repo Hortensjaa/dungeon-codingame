@@ -1,10 +1,22 @@
 package com.codingame.game.generators;
 
-import com.codingame.game.Coord;
+import com.codingame.game.generators.tree.DungeonTree;
 
-public class Fitness {
-    // BFS to find the longest shortest path between player and goal
-    int longestShortestPath(GridDefinition gridDef) {
-        return 42;
+
+public final class Fitness {
+    static int longestShortestPath(DungeonTree tree) {
+        return 1;
+    }
+    static int countRooms(DungeonTree tree) {
+        return 1;
+    }
+    static float enemiesDifficultySum(DungeonTree tree) {
+        return 1;
+    }
+    static float rewardsSum(DungeonTree tree) {
+        return 1;
+    }
+    static float enemiesSumOnMainPath(DungeonTree tree) {
+        return 1;
     }
 }

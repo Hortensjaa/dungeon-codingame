@@ -23,6 +23,7 @@ public class GridDefinition {
     @Builder.Default
     private final Coord[] enemies = new Coord[0];
 
+    // methods
     public int rows() {
         return grid.length;
     }
@@ -37,5 +38,21 @@ public class GridDefinition {
     public void setCoordValue(Coord coord, int value) {
         grid[coord.getY()][coord.getX()] = value;
     }
+
+    public void prettyPrint() {
+        System.out.print("   ");
+        for (int x = 0; x < columns(); x++) {
+            System.out.printf("%2d ", x);
+        }
+        System.out.println();
+        for (int y = 0; y < rows(); y++) {
+            System.out.printf("%2d ", y);
+            for (int x = 0; x < columns(); x++) {
+                System.out.printf("%2d ", grid[y][x]);
+            }
+            System.out.println();
+        }
+    }
+
 }
 

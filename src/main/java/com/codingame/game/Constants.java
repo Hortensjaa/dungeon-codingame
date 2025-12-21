@@ -11,11 +11,19 @@ public class Constants {
 
 //    grid cell types
     public static final int WALL = 0;
-    public static final int FLOOR = 1;
+    public static final int ROOM = 1;
+    public static final int CORRIDOR = 2;
+
+//  grid constants (doesn't depend on CELL_SIZE)
+    public static final int WALL_OFFSET = 1; // in cells
+    public static final int CORRIDOR_WIDTH = 1; // in cells
+    public static final int MIN_ROOM_DIMENSION = 2;  // minimum room width and height in cells
+    public static final int MIN_PARTITION_DIMENSION = MIN_ROOM_DIMENSION + 2 * WALL_OFFSET; // minimum partition width and height in cells
 
 //    sprites
-    public static final String WALL_SPRITE = "assets/walls/tile_8.png";
-    public static final String FLOOR_SPRITE = "assets/walls/tile_10.png";
+    public static final String WALL_SPRITE = "assets/walls_32/tile_10.png";
+    public static final String ROOM_SPRITE = "assets/walls_32/tile_8.png";
+    public static final String CORRIDOR_SPRITE = "assets/walls_32/tile_12.png";
     public static final String PLAYER_SPRITE = "player/player.png";
     public static final String GOAL_SPRITE = "walls/tile_6.png";
 

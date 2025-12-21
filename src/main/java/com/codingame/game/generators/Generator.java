@@ -18,7 +18,7 @@ public abstract class Generator {
         int[][] grid = new int[rows][columns];
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
-                grid[y][x] = Constants.FLOOR;
+                grid[y][x] = Constants.ROOM;
             }
         }
         return grid;

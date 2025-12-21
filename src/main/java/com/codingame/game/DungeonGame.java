@@ -1,6 +1,7 @@
 package com.codingame.game;
 
 import com.codingame.game.generators.GridDefinition;
+import com.codingame.game.move.Action;
 import lombok.Getter;
 
 
@@ -38,6 +39,6 @@ public class DungeonGame {
     }
 
     private boolean isWall(Coord c) {
-        return grid[c.getY()][c.getX()] != Constants.FLOOR;
+        return grid[c.getY()][c.getX()] == Constants.WALL;
     }
 }

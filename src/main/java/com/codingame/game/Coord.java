@@ -1,5 +1,6 @@
 package com.codingame.game;
 
+import com.codingame.game.move.Action;
 import lombok.Getter;
 
 @Getter
@@ -13,8 +14,8 @@ public class Coord {
     }
 
     public Coord applyAction(Action action) {
-        int new_x = this.x + action.getX();
-        int new_y = this.y + action.getY();
+        int new_x = this.x + action.getDx();
+        int new_y = this.y + action.getDy();
         return new Coord(new_x, new_y);
     }
 

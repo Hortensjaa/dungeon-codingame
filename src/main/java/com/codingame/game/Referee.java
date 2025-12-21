@@ -3,8 +3,11 @@ package com.codingame.game;
 import java.util.Arrays;
 import java.util.List;
 
-import com.codingame.game.generators.BinarySpacePartitioning;
+import com.codingame.game.generators.GeneratorFromTree;
 import com.codingame.game.generators.GridDefinition;
+import com.codingame.game.generators.tree.DungeonTree;
+import com.codingame.game.generators.tree.DungeonTreeBuilder;
+import com.codingame.game.move.Action;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.SoloGameManager;
@@ -56,10 +59,16 @@ public class Referee extends AbstractReferee {
         // Draw only walls
         for (int y = 0; y < Constants.ROWS; y++) {
             for (int x = 0; x < Constants.COLUMNS; x++) {
-                if (grid[y][x] == Constants.WALL) {
+                if (grid[y][x] == Constants.ROOM) {
                     graphicEntityModule.createSprite()
-                            .setImage(Constants.WALL_SPRITE)
-                            .setScale(0.5)
+                            .setImage(Constants.ROOM_SPRITE)
+                            .setX(toX(x))
+                            .setY(toY(y))
+                            .setZIndex(0);
+                }
+                else if (grid[y][x] == Constants.CORRIDOR) {
+                    graphicEntityModule.createSprite()
+                            .setImage(Constants.CORRIDOR_SPRITE)
                             .setX(toX(x))
                             .setY(toY(y))
                             .setZIndex(0);
@@ -93,9 +102,15 @@ public class Referee extends AbstractReferee {
      */
     @Override
     public void init() {
-        gameManager.setFrameDuration(300);
+        gameManager.setFrameDuration(100);
 
-        GridDefinition gridDefinition = new BinarySpacePartitioning().generate();
+        DungeonTree tree = DungeonTreeBuilder.create()
+                .maxDepth(4)
+                .branchingFactorX(0.9f)
+                .branchingFactorY(0.7f)
+                .branchingFactorMultiplier(0.9f)
+                .build();
+        GridDefinition gridDefinition = new GeneratorFromTree(tree).generate();
         game = new DungeonGame(gridDefinition);
 
         drawGrid(gridDefinition.getGrid());
