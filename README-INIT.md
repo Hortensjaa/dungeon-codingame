@@ -7,6 +7,7 @@ Creating good levels in roguelike games are challenging, as they need to be:
 - **controllable and high quality**, like in evolutionary or quality-diversity based approaches, but...
 - also **fast to generate**, like in constructive approaches (grammar based generation), but...
 - diverse (again), and so on.
+
 In project and then engineering thesis, I will implement hybrid procedural generation algorithm, that will fit those
 needs by combining MAP-Elites tree creation with constructive (but with constrained randomness) dungeon generation from those trees.
 Additionally, generated dungeons will be evaluated based on they quality, diversity and solvability and 
@@ -68,7 +69,8 @@ The most important part will be the analysis of my generator and its outputs.
         - [ ] diverse room shapes
 - [ ] Add features to dungeons
     - [ ] enemies
-        - [ ] just standing in place
+        - [ ] implement onCollision() 
+        - [x] just standing in place
         - [ ] movement paths
         - [.] different types
     - [ ] dodging enemies with stamina
