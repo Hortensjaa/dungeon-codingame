@@ -30,12 +30,12 @@ public class DungeonGame {
     }
 
     public boolean move(Action action) {
-        Coord next = player.getPosition().applyAction(action);
+        Coord next = player.move(action);
 
-        if (isOutOfBounds(next)) return false;
-        if (isWall(next)) return false;
-
-        player.setPosition(next);
+        if (isOutOfBounds(next) || isWall(next)) {
+            player.undoMove();
+            return false;
+        }
         return true;
     }
 

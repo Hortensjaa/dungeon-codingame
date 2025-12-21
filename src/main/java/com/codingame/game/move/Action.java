@@ -16,5 +16,13 @@ public enum Action implements Move {
     private final int dx;
     private final int dy;
     private final String name;
+
+    public Action opposite() {
+        if (this == UP) return DOWN;
+        if (this == DOWN) return UP;
+        if (this == LEFT) return RIGHT;
+        if (this == RIGHT) return LEFT;
+        return this;
+    }
 }
 

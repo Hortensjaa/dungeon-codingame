@@ -101,7 +101,7 @@ public class Referee extends AbstractReferee {
                     .setImage(game.getEnemies().get(i).getCurrentSprite())
                     .setX(toX(enemyCoords.getX()))
                     .setY(toY(enemyCoords.getY()))
-                    .setZIndex(1);
+                    .setZIndex(3);
         }
     }
 
@@ -115,9 +115,9 @@ public class Referee extends AbstractReferee {
         gameManager.setFrameDuration(100);
 
         DungeonTree tree = DungeonTreeBuilder.create()
-                .maxDepth(4)
+                .maxDepth(5)
                 .branchingFactorX(0.9f)
-                .branchingFactorY(0.7f)
+                .branchingFactorY(0.5f)
                 .branchingFactorMultiplier(0.9f)
                 .build();
         GridDefinition gridDefinition = new GeneratorFromTree(tree).generate();

@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum EnemyType {
-    FIRE("FIRE", "enemies/fire/cut/row-1-column-", 8);
+    FIRE("FIRE", "enemies/fire/cut/", 8);
 
     private final String name;
     private final String filePrefix;
