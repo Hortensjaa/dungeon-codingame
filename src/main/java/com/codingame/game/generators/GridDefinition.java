@@ -1,7 +1,7 @@
 package com.codingame.game.generators;
 
 import com.codingame.game.Constants;
-import com.codingame.game.Coord;
+import com.codingame.game.move.Coord;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

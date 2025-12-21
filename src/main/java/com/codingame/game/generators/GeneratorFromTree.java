@@ -1,7 +1,7 @@
 package com.codingame.game.generators;
 
 import com.codingame.game.Constants;
-import com.codingame.game.Coord;
+import com.codingame.game.move.Coord;
 import com.codingame.game.generators.tree.DungeonTree;
 import com.codingame.game.generators.tree.RoomTypes;
 import com.codingame.game.move.Direction;

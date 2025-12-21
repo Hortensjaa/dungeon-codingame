@@ -1,7 +1,7 @@
 package com.codingame.game.generators;
 
 import com.codingame.game.Constants;
-import com.codingame.game.Coord;
+import com.codingame.game.move.Coord;
 
 public abstract class Generator {
     protected static int[][] initialGridWalls(int rows, int columns) {

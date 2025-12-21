@@ -1,11 +1,16 @@
-# PCG of dungeons in games
-Comprehension of different techniques by quality, diversity and solvability by different agents
+# PCG of dungeons in roguelike games
+Presentation and evaluation of hybrid procedural generation algorithm for dungeons in roguelike games.
 
 ## Overview and goal
-In project and then engineering thesis, I will implement hybrid procedural generation algorithm, that will fit needs
-for roguelike games - fast generation and great diversity.
-Additionally, generated dungeons will be evaluated based on they quality, diversity and solvability. 
-Conclusions will be presented at the end of the semester and then explored further in my engineering thesis.
+Creating good levels in roguelike games are challenging, as they need to be:
+- **diverse**, like in random(-like) approaches (BSP, agent based generation), but...
+- **controllable and high quality**, like in evolutionary or quality-diversity based approaches, but...
+- also **fast to generate**, like in constructive approaches (grammar based generation), but...
+- diverse (again), and so on.
+In project and then engineering thesis, I will implement hybrid procedural generation algorithm, that will fit those
+needs by combining MAP-Elites tree creation with constructive (but with constrained randomness) dungeon generation from those trees.
+Additionally, generated dungeons will be evaluated based on they quality, diversity and solvability and 
+conclusions will be presented at the end of the semester and then explored further in my engineering thesis.
 
 ## MVP
 Dungeon as group of rooms connected by corridors, with enemies (standing or moving in the line and back) needed to be 
@@ -70,3 +75,4 @@ The most important part will be the analysis of my generator and its outputs.
     - [.] fighting enemies with mana
     - [.] potions
     - [.] collectables
+- [ ] trees serialization (or save in json?)

@@ -2,6 +2,7 @@ package com.codingame.game;
 
 import com.codingame.game.generators.GridDefinition;
 import com.codingame.game.move.Action;
+import com.codingame.game.move.Coord;
 import lombok.Getter;
 
 

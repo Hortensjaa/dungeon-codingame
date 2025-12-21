@@ -1,3 +1,17 @@
+# PCG of dungeons in roguelike games
+Presentation and evaluation of hybrid procedural generation algorithm for dungeons in roguelike games.
+
+## Overview and goal
+Creating good levels in roguelike games are challenging, as they need to be:
+- **diverse**, like in random(-like) approaches (BSP, agent based generation), but...
+- **controllable and high quality**, like in evolutionary or quality-diversity based approaches, but...
+- also **fast to generate**, like in constructive approaches (grammar based generation), but...
+- diverse (again), and so on.
+  In project and then engineering thesis, I will implement hybrid procedural generation algorithm, that will fit those
+  needs by combining MAP-Elites tree creation with constructive (but with constrained randomness) dungeon generation from those trees.
+  Additionally, generated dungeons will be evaluated based on they quality, diversity and solvability and
+  conclusions will be presented at the end of the semester and then explored further in my engineering thesis.
+
 # Hybrid algorithm
 The goal is to create different levels fast. One of the possible approaches is to split generation into two stages:
 generating tree structure of dungeon and then mapping it on grid. Tree structures can be generated using many different

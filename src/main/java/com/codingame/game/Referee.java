@@ -8,6 +8,7 @@ import com.codingame.game.generators.GridDefinition;
 import com.codingame.game.generators.tree.DungeonTree;
 import com.codingame.game.generators.tree.DungeonTreeBuilder;
 import com.codingame.game.move.Action;
+import com.codingame.game.move.Coord;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.SoloGameManager;
