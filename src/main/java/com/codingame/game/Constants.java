@@ -23,6 +23,8 @@ public class Constants {
 //    tree constants
     public static final int MAX_TREE_WIDTH = COLUMNS / MIN_PARTITION_DIMENSION;
     public static final int MAX_TREE_HEIGHT = ROWS / MIN_PARTITION_DIMENSION;
+    public static final int MIN_DEPTH = 2;
+    public static final int MAX_DEPTH = 5;
 
 //    sprites
     public static final String WALL_SPRITE = "assets/walls_32/tile_10.png";

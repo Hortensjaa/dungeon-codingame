@@ -1,4 +1,4 @@
-package com.codingame.game.generator.tree;
+package com.codingame.game.tree;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

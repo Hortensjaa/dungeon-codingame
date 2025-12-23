@@ -5,10 +5,11 @@ import java.util.List;
 
 import com.codingame.game.generator.GeneratorFromTree;
 import com.codingame.game.generator.GridDefinition;
-import com.codingame.game.generator.tree.DungeonTree;
-import com.codingame.game.generator.tree.DungeonTreeBuilder;
+import com.codingame.game.tree.DungeonTree;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
+import com.codingame.game.tree.MapElites;
+import com.codingame.game.tree.MapElitesArchive;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.SoloGameManager;
@@ -114,12 +115,9 @@ public class Referee extends AbstractReferee {
     public void init() {
         gameManager.setFrameDuration(100);
 
-        DungeonTree tree = DungeonTreeBuilder.create()
-                .maxDepth(5)
-                .branchingFactorX(0.9f)
-                .branchingFactorY(0.5f)
-                .branchingFactorMultiplier(0.9f)
-                .build();
+        MapElitesArchive res = MapElites.run();
+        res.print();
+        DungeonTree tree = res.getTreeAt(9, 0);
         GridDefinition gridDefinition = new GeneratorFromTree(tree).generate();
         game = new DungeonGame(gridDefinition);
 

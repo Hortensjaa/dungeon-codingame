@@ -3,8 +3,9 @@ package com.codingame.game.generator;
 import com.codingame.game.Constants;
 import com.codingame.game.game_objects.EnemyType;
 import com.codingame.game.move.Coord;
-import com.codingame.game.generator.tree.DungeonTree;
-import com.codingame.game.generator.tree.RoomTypes;
+import com.codingame.game.tree.DungeonTree;
+import com.codingame.game.tree.DungeonTreeEvaluation;
+import com.codingame.game.tree.RoomTypes;
 import com.codingame.game.move.Direction;
 
 import java.util.HashMap;
@@ -16,7 +17,6 @@ public class GeneratorFromTree extends Generator {
     Coord exitPoint;
     Map<Coord, EnemyType> enemies = new HashMap<>();
     int[][] grid;
-
 
     public GeneratorFromTree(DungeonTree dungeonTree) {
         tree = dungeonTree;
@@ -114,7 +114,7 @@ public class GeneratorFromTree extends Generator {
         // call recursively for children
         int dx = x_max - x_min;
         int dy = y_max - y_min;
-        placeRoomRec(x_min -  dx, x_min, y_min, y_max, node.getLeftChild());
+        placeRoomRec(x_min - dx, x_min, y_min, y_max, node.getLeftChild());
         placeRoomRec(x_max, x_max + dx, y_min, y_max, node.getRightChild());
         placeRoomRec(x_min, x_max, y_min - dy, y_min, node.getTopChild());
         placeRoomRec(x_min, x_max, y_max, y_max + dy, node.getBottomChild());
@@ -123,9 +123,10 @@ public class GeneratorFromTree extends Generator {
     @Override
     public GridDefinition generate(int rows, int columns) {
         grid = Generator.initialGridWalls(rows, columns);
+        DungeonTreeEvaluation evaluation = tree.evaluate();
 
-        int treeWidth = tree.getTreeWidth();
-        int treeHeight = tree.getTreeHeight();
+        int treeWidth = evaluation.getTreeWidth();
+        int treeHeight = evaluation.getTreeHeight();
 
         // calculating partitions; todo: cutting branches with moving exit up if cut off
         int partitionWidth = columns / treeWidth;
@@ -138,8 +139,8 @@ public class GeneratorFromTree extends Generator {
             throw new IllegalArgumentException("Grid too small for the generated tree structure (height)");
         }
 
-        int placeholderLeft = tree.getSpaceLeft() * partitionWidth;
-        int placeholderTop = tree.getSpaceTop() * partitionHeight;
+        int placeholderLeft = evaluation.getLeft() * partitionWidth;
+        int placeholderTop = evaluation.getTop() * partitionHeight;
 
         // place rooms
         placeRoomRec(
