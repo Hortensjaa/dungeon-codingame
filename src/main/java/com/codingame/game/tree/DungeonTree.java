@@ -17,7 +17,7 @@ public class DungeonTree {
 
     // data
     @Setter
-    private RoomTypes.Base room;
+    private NodeTypes.Base room;
     //children
     private DungeonTree rightChild = null;
     private DungeonTree leftChild = null;
@@ -29,18 +29,18 @@ public class DungeonTree {
     private int depth;
 
     // --------------- constructors ---------------
-    public DungeonTree(RoomTypes.Base room, Direction parentDirection) {
+    public DungeonTree(NodeTypes.Base room, Direction parentDirection) {
         this.room = room;
         this.parentDirection = parentDirection;
     }
 
     public DungeonTree(Direction parentDirection) {
-        this.room = RoomTypes.getRandomRoom();
+        this.room = NodeTypes.getRandomRoom();
         this.parentDirection = parentDirection;
     }
 
     public DungeonTree(Direction parentDirection, DungeonTree parent) {
-        this.room = RoomTypes.getRandomRoom();
+        this.room = NodeTypes.getRandomRoom();
         this.parentDirection = parentDirection;
         this.parent = parent;
     }
@@ -56,10 +56,10 @@ public class DungeonTree {
         // Find the two most distant leaves for Start and Exit
         DungeonTree[] mostDistantLeaves = findMostDistantLeaves();
         if (mostDistantLeaves[0] != null) {
-            mostDistantLeaves[0].room = new RoomTypes.Start();
+            mostDistantLeaves[0].room = new NodeTypes.Start();
         }
         if (mostDistantLeaves[1] != null) {
-            mostDistantLeaves[1].room = new RoomTypes.Exit();
+            mostDistantLeaves[1].room = new NodeTypes.Exit();
         }
     }
 
@@ -74,7 +74,7 @@ public class DungeonTree {
             float branchingFactorMultiplier
     ) {
         this.depth = currentDepth;
-        room = RoomTypes.getRandomRoom();
+        room = NodeTypes.getRandomRoom();
 
         if (currentDepth >= maxDepth) {
             return;
@@ -291,7 +291,7 @@ public class DungeonTree {
     }
 
     boolean isStartOrExit() {
-        return room instanceof RoomTypes.Start || room instanceof RoomTypes.Exit;
+        return room instanceof NodeTypes.Start || room instanceof NodeTypes.Exit;
     }
 
     public int countNodes() {
@@ -306,10 +306,10 @@ public class DungeonTree {
         boolean hasStart = false;
         boolean hasExit = false;
         for (DungeonTree node : nodes) {
-            if (node.room instanceof RoomTypes.Start) {
+            if (node.room instanceof NodeTypes.Start) {
                 hasStart = true;
             }
-            if (node.room instanceof RoomTypes.Exit) {
+            if (node.room instanceof NodeTypes.Exit) {
                 hasExit = true;
             }
         }
@@ -317,8 +317,8 @@ public class DungeonTree {
     }
 
     // --------------- evaluation ---------------
-    public DungeonTreeEvaluation evaluate() {
-        return DungeonTreeEvaluator.evaluate(this);
+    public DungeonTreeDimensions evaluate() {
+        return DungeonTreeEvaluator.evaluateDimensions(this);
     }
 
 }

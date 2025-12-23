@@ -18,17 +18,27 @@ public class MapElitesArchive {
     private final Function<DungeonTree, Float> xAxisFunction;
     private final Function<DungeonTree, Float> yAxisFunction;
     private final Function<DungeonTree, Float> fitnessFunction;
+
+    private final float min_x;
+    private final float max_x;
+    private final float min_y;
+    private final float max_y;
     private final ArchiveRecord[][] archive;
 
     public MapElitesArchive(
             Function<DungeonTree, Float> xAxisFunction,
             Function<DungeonTree, Float> yAxisFunction,
-            Function<DungeonTree, Float> fitnessFunction
+            Function<DungeonTree, Float> fitnessFunction,
+            float min_x, float max_x, float min_y, float max_y
     ) {
         archive = new ArchiveRecord[SIZE][SIZE];
         this.xAxisFunction = xAxisFunction;
         this.yAxisFunction = yAxisFunction;
         this.fitnessFunction = fitnessFunction;
+        this.max_x = max_x;
+        this.min_x = min_x;
+        this.max_y = max_y;
+        this.min_y = min_y;
     }
 
     public void populateArchive(int numIndividuals) {
@@ -36,30 +46,39 @@ public class MapElitesArchive {
             DungeonTree tree = new DungeonTree();
             tree.generateRandomTree(
                     (int) (Constants.MIN_DEPTH + Math.random() * (Constants.MAX_DEPTH - Constants.MIN_DEPTH)),
-                    (float) (0.5 + Math.random() * 0.5),
-                    0.95f
+                    (float) (0.25 + Math.random() * 0.5),
+                    (float) (0.5 + Math.random() * 0.5)
             );
             addToArchive(tree);
         }
     }
 
+    private int mapToIndex(float value, float min, float max) {
+        if (value < min || value > max) {
+            return -1; // outside archive bounds
+        }
+        float normalized = (value - min) / (max - min); // [0,1]
+        int index = (int) (normalized * SIZE);
+        return Math.min(index, SIZE - 1);
+    }
+
     void addToArchive(DungeonTree tree) {
         float xValue = xAxisFunction.apply(tree);
         float yValue = yAxisFunction.apply(tree);
-        if (xValue < 0 || yValue < 0) {
+
+        int xIndex = mapToIndex(xValue, min_x, max_x);
+        int yIndex = mapToIndex(yValue, min_y, max_y);
+
+        if (xIndex < 0 || yIndex < 0) {
             return;
         }
-        int xIndex = Math.min((int)(xValue * SIZE), SIZE - 1);
-        int yIndex = Math.min((int)(yValue * SIZE), SIZE - 1);
+
         ArchiveRecord existingRecord = archive[xIndex][yIndex];
         float newQuality = fitnessFunction.apply(tree);
-        if (existingRecord == null) {
+
+        if (existingRecord == null ||
+                newQuality >= existingRecord.getFitness()) {
             archive[xIndex][yIndex] = new ArchiveRecord(tree, newQuality);
-        } else {
-            float existingQuality = existingRecord.getFitness();
-            if (newQuality >= existingQuality) {
-                archive[xIndex][yIndex] = new ArchiveRecord(tree, newQuality);
-            }
         }
     }
 
@@ -70,7 +89,17 @@ public class MapElitesArchive {
         if (rec != null) {
             return rec.getTree();
         }
-        return null;
+        return getRandomTree();
+    }
+
+     public DungeonTree getRandomGoodTree() {
+        int xIndex = (int)(Math.random() * SIZE);
+        int yIndex = (int)(Math.random() * SIZE);
+        ArchiveRecord rec = archive[xIndex][yIndex];
+        if (rec != null && rec.getFitness() > 0.0f) {
+            return rec.getTree();
+        }
+        return getRandomGoodTree();
     }
 
     public DungeonTree getTreeAt(int xIndex, int yIndex) {

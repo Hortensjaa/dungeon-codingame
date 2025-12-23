@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DungeonTreeEvaluation {
+public class DungeonTreeDimensions {
     private final int right;
     private final int left;
     private final int top;
@@ -23,26 +23,26 @@ public class DungeonTreeEvaluation {
 
 final class DungeonTreeEvaluator {
 
-    public static DungeonTreeEvaluation evaluate(DungeonTree tree) {
+    public static DungeonTreeDimensions evaluateDimensions(DungeonTree tree) {
         if (tree.isLeaf()) {
-            return new DungeonTreeEvaluation(0, 0, 0, 0);
+            return new DungeonTreeDimensions(0, 0, 0, 0);
         }
 
-        DungeonTreeEvaluation right =
-                tree.getRightChild() != null ? evaluate(tree.getRightChild())
-                        : new DungeonTreeEvaluation(0,0,0,0);
+        DungeonTreeDimensions right =
+                tree.getRightChild() != null ? evaluateDimensions(tree.getRightChild())
+                        : new DungeonTreeDimensions(0,0,0,0);
 
-        DungeonTreeEvaluation left =
-                tree.getLeftChild() != null ? evaluate(tree.getLeftChild())
-                        : new DungeonTreeEvaluation(0,0,0,0);
+        DungeonTreeDimensions left =
+                tree.getLeftChild() != null ? evaluateDimensions(tree.getLeftChild())
+                        : new DungeonTreeDimensions(0,0,0,0);
 
-        DungeonTreeEvaluation top =
-                tree.getTopChild() != null ? evaluate(tree.getTopChild())
-                        : new DungeonTreeEvaluation(0,0,0,0);
+        DungeonTreeDimensions top =
+                tree.getTopChild() != null ? evaluateDimensions(tree.getTopChild())
+                        : new DungeonTreeDimensions(0,0,0,0);
 
-        DungeonTreeEvaluation bottom =
-                tree.getBottomChild() != null ? evaluate(tree.getBottomChild())
-                        : new DungeonTreeEvaluation(0,0,0,0);
+        DungeonTreeDimensions bottom =
+                tree.getBottomChild() != null ? evaluateDimensions(tree.getBottomChild())
+                        : new DungeonTreeDimensions(0,0,0,0);
 
         int spaceRight = max(
                 right.getRight() + 1,
@@ -72,7 +72,7 @@ final class DungeonTreeEvaluator {
                 bottom.getBottom() + 1
         );
 
-        return new DungeonTreeEvaluation(
+        return new DungeonTreeDimensions(
                 spaceRight, spaceLeft, spaceTop, spaceBottom
         );
     }

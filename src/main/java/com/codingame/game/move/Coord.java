@@ -18,6 +18,10 @@ public class Coord {
         return new Coord(new_x, new_y);
     }
 
+    public Coord add(Coord other) {
+        return new Coord(this.x + other.x, this.y + other.y);
+    }
+
     @Override
     public String toString() {
         return x + " " + y;

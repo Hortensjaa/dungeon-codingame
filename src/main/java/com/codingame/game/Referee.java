@@ -117,7 +117,7 @@ public class Referee extends AbstractReferee {
 
         MapElitesArchive res = MapElites.run();
         res.print();
-        DungeonTree tree = res.getTreeAt(9, 0);
+        DungeonTree tree = res.getRandomGoodTree();
         GridDefinition gridDefinition = new GeneratorFromTree(tree).generate();
         game = new DungeonGame(gridDefinition);
 

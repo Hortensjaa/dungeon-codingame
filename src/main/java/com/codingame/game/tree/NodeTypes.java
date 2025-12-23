@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class RoomTypes {
+public class NodeTypes {
 
     public static Base getRandomRoom() {
         double r = Math.random();

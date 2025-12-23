@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class MapElites {
-    final static int GENERATIONS = 10000;
+    final static int GENERATIONS = 100000;
+//    final static int GENERATIONS = 10_000_000;
 
     private static DungeonTree getRandomNode(DungeonTree root) {
         List<DungeonTree> nodes = new ArrayList<>();
@@ -17,7 +18,13 @@ public final class MapElites {
 
 // ------------------------- mutations -------------------------
     private static void changeRoomType(DungeonTree tree) {
-        tree.setRoom(RoomTypes.getRandomRoom());
+        tree.setRoom(NodeTypes.getRandomRoom());
+    }
+
+    private static void swapRoomTypes(DungeonTree tree1, DungeonTree tree2) {
+        NodeTypes.Base temp = tree1.getRoom();
+        tree1.setRoom(tree2.getRoom());
+        tree2.setRoom(temp);
     }
 
     private static void swapSubtrees(DungeonTree tree) {
@@ -63,11 +70,11 @@ public final class MapElites {
             removed = tree.getRightChild();
             tree.setRightChild(null);
         }
-        if (removed != null && removed.getRoom() instanceof RoomTypes.Start) {
-            tree.setRoom(new RoomTypes.Start());
+        if (removed != null && removed.getRoom() instanceof NodeTypes.Start) {
+            tree.setRoom(new NodeTypes.Start());
         }
-        if (removed != null && removed.getRoom() instanceof RoomTypes.Exit) {
-            tree.setRoom(new RoomTypes.Exit());
+        if (removed != null && removed.getRoom() instanceof NodeTypes.Exit) {
+            tree.setRoom(new NodeTypes.Exit());
         }
     }
 
@@ -83,8 +90,11 @@ public final class MapElites {
                 addChildNode(randomChild);
             }
         } else if (randomChild.isStartOrExit()) {
-             if (rand < 0.5f) {
+             if (rand < 0.25f) {
                 swapSubtrees(randomChild);
+            } else if (rand < 0.5f) {
+                 DungeonTree randomChild2 = getRandomNode(treeCopy);
+                 swapRoomTypes(randomChild, randomChild2);
             } else if (rand < 0.75f) {
                 addChildNode(randomChild);
             } else {
@@ -126,9 +136,11 @@ public final class MapElites {
     public static MapElitesArchive run() {
         // -- initialize
         MapElitesArchive archive = new MapElitesArchive(
-                Fitness::difficultyOnMainPath,
-                Fitness::startToExitPath,
-                tree -> Fitness.fitness(tree, true, true)
+                Fitness::averageDifficulty,
+                Fitness::averageReward,
+                tree -> Fitness.fitness(tree, true, true),
+                0.1f, 0.7f,
+                0.2f, 0.8f
         );
         archive.populateArchive(100);
         // -- main loop

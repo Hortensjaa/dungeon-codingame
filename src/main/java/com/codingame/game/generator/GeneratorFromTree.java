@@ -4,8 +4,8 @@ import com.codingame.game.Constants;
 import com.codingame.game.game_objects.EnemyType;
 import com.codingame.game.move.Coord;
 import com.codingame.game.tree.DungeonTree;
-import com.codingame.game.tree.DungeonTreeEvaluation;
-import com.codingame.game.tree.RoomTypes;
+import com.codingame.game.tree.DungeonTreeDimensions;
+import com.codingame.game.tree.NodeTypes;
 import com.codingame.game.move.Direction;
 
 import java.util.HashMap;
@@ -52,8 +52,14 @@ public class GeneratorFromTree extends Generator {
         int centerX = (x_min + x_max) / 2;
         int centerY = (y_min + y_max) / 2;
 
-        // room already placed; todo: let's rethink this... try to split partition?
+        // room already placed - should not happen
         if (grid[centerY][centerX] == Constants.ROOM) {
+            if (node.getRoom() instanceof NodeTypes.Start) {
+                playerStart = new Coord(centerX, centerY);
+            } else if (node.getRoom() instanceof NodeTypes.Exit) {
+                exitPoint = new Coord(centerX, centerY);
+            }
+            System.out.println("[WARNING] Room placement conflict");
             return;
         }
 
@@ -65,15 +71,13 @@ public class GeneratorFromTree extends Generator {
         }
 
         // set start and exit points in the center of their rooms; todo: more interesting placement
-        if (node.getRoom() instanceof RoomTypes.Start) {
+        if (node.getRoom() instanceof NodeTypes.Start) {
             placeStart(x_min, x_max, y_min, y_max);
-        } else if (node.getRoom() instanceof RoomTypes.Exit) {
+        } else if (node.getRoom() instanceof NodeTypes.Exit) {
             placeExit(x_min, x_max, y_min, y_max);
-        } else if (node.getRoom() instanceof RoomTypes.Enemies) {
+        } else if (node.getRoom() instanceof NodeTypes.Enemies) {
             placeEnemies(x_min, x_max, y_min, y_max);
         }
-
-        // add enemies, items, etc. todo: will be added later
 
         // place corridors to parent room; todo: also will add more interesting corridor shapes
         if (node.getParentDirection() != null) {
@@ -123,12 +127,12 @@ public class GeneratorFromTree extends Generator {
     @Override
     public GridDefinition generate(int rows, int columns) {
         grid = Generator.initialGridWalls(rows, columns);
-        DungeonTreeEvaluation evaluation = tree.evaluate();
+        DungeonTreeDimensions evaluation = tree.evaluate();
 
         int treeWidth = evaluation.getTreeWidth();
         int treeHeight = evaluation.getTreeHeight();
 
-        // calculating partitions; todo: cutting branches with moving exit up if cut off
+        // calculating partitions; todo: cutting branches with moving exit up if cut off or sth?
         int partitionWidth = columns / treeWidth;
         if (partitionWidth < Constants.MIN_PARTITION_DIMENSION) {
             throw new IllegalArgumentException("Grid too small for the generated tree structure (width)");
