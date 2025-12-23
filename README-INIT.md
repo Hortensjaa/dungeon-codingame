@@ -45,8 +45,7 @@ The most important part will be the analysis of my generator and its outputs.
 - https://arxiv.org/abs/2202.09301 (map elites in dungeon generation)
 - https://arxiv.org/abs/2107.06638 (behavior trees)
 - https://aeau.github.io/assets/papers/2020/tolFlod2020-chiplay01.pdf (about making sense, not only correct layout - interesting)
-- https://openresearch-repository.anu.edu.au/items/abb3546d-81e0-4d12-aefa-714b1c29cff6 (hybrid approach - grammar + cellular automata)
-- https://pure.ul.ie/en/publications/procedural-content-generation-for-games-using-grammatical-evoluti/ (evolution on grammars) 
+- https://dl.acm.org/doi/epdf/10.1145/3402942.3402945 (hybrid approach - grammar + cellular automata)
 - maybe https://reingold.co/tidier-drawings.pdf for generating map from trees
 
 ## Plan
