@@ -1,7 +1,10 @@
-package com.codingame.game.tree;
+package com.codingame.game.algorithm;
 
 import com.codingame.game.Constants;
 import com.codingame.game.move.Coord;
+import com.codingame.game.tree.DungeonTree;
+import com.codingame.game.tree.DungeonTreeDimensions;
+import com.codingame.game.tree.NodeTypes;
 
 import java.util.*;
 
@@ -27,9 +30,9 @@ public final class Fitness {
         DungeonTree exit = null;
 
         for (DungeonTree node : nodes) {
-            if (node.getRoom() instanceof NodeTypes.Start) {
+            if (node.getType() instanceof NodeTypes.Start) {
                 start = node;
-            } else if (node.getRoom() instanceof NodeTypes.Exit) {
+            } else if (node.getType() instanceof NodeTypes.Exit) {
                 exit = node;
             }
         }
@@ -110,7 +113,7 @@ public final class Fitness {
 
         float totalDifficulty = 0;
         for (DungeonTree node : nodes) {
-            totalDifficulty += node.getRoom().getDifficulty();
+            totalDifficulty += node.getType().getDifficulty();
         }
         return totalDifficulty / nodes.size();
     }
@@ -121,7 +124,7 @@ public final class Fitness {
 
         float totalReward = 0;
         for (DungeonTree node : nodes) {
-            totalReward += node.getRoom().getReward();
+            totalReward += node.getType().getReward();
         }
         return totalReward / nodes.size();
     }

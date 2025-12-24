@@ -6,6 +6,23 @@ import lombok.Getter;
 @Getter
 public class NodeTypes {
 
+    public static Base fromString(String type, float difficulty, float reward) {
+        switch (type) {
+            case "Empty":
+                return new Empty();
+            case "Start":
+                return new Start();
+            case "Exit":
+                return new Exit();
+            case "Enemies":
+                return new Enemies(difficulty);
+            case "Treasure":
+                return new Treasure(reward);
+            default:
+                throw new IllegalArgumentException("Unknown node type: " + type);
+        }
+    }
+
     public static Base getRandomRoom() {
         double r = Math.random();
         if (r < 0.5) {
@@ -26,31 +43,31 @@ public class NodeTypes {
 
     public static class Empty extends Base {
         Empty() {
-            super(0, 0, "Empty node");
+            super(0, 0, "Empty");
         }
     }
 
     public static class Start extends Base {
         public Start() {
-            super(0, 0, "Start node");
+            super(0, 0, "Start");
         }
     }
 
     public static class Exit extends Base {
         public Exit() {
-            super(0, 0, "Exit node");
+            super(0, 0, "Exit");
         }
     }
 
     public static class Enemies extends Base {
         Enemies(float difficulty) {
-            super(difficulty, 0, "Enemies node");
+            super(difficulty, 0, "Enemies");
         }
     }
 
     public static class Treasure extends Base {
         Treasure(float reward) {
-            super(0, reward, "Treasure node");
+            super(0, reward, "Treasure");
         }
     }
 }

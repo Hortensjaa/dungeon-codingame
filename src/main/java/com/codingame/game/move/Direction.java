@@ -22,5 +22,14 @@ public enum Direction implements Move {
         if (this == RIGHT) return LEFT;
         return this;
     }
+
+    public static Direction fromString(String s) {
+        for (Direction d : values()) {
+            if (d.name.equalsIgnoreCase(s)) {
+                return d;
+            }
+        }
+        throw new IllegalArgumentException("Unknown direction: " + s);
+    }
 }
 

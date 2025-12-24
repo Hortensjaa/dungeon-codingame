@@ -1,0 +1,21 @@
+{
+  "fitness" : 0.0,
+  "nodes" : [ {
+    "id" : 0,
+    "type" : "Treasure",
+    "depth" : 0,
+    "difficulty" : 0.0,
+    "reward" : 0.9677851
+  }, {
+    "id" : 1,
+    "type" : "Enemies",
+    "depth" : 0,
+    "difficulty" : 0.98144543,
+    "reward" : 0.0
+  } ],
+  "edges" : [ {
+    "from" : 0,
+    "to" : 1,
+    "direction" : "LEFT"
+  } ]
+}

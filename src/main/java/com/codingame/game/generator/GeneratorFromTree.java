@@ -54,9 +54,9 @@ public class GeneratorFromTree extends Generator {
 
         // room already placed - should not happen
         if (grid[centerY][centerX] == Constants.ROOM) {
-            if (node.getRoom() instanceof NodeTypes.Start) {
+            if (node.getType() instanceof NodeTypes.Start) {
                 playerStart = new Coord(centerX, centerY);
-            } else if (node.getRoom() instanceof NodeTypes.Exit) {
+            } else if (node.getType() instanceof NodeTypes.Exit) {
                 exitPoint = new Coord(centerX, centerY);
             }
             System.out.println("[WARNING] Room placement conflict");
@@ -71,11 +71,11 @@ public class GeneratorFromTree extends Generator {
         }
 
         // set start and exit points in the center of their rooms; todo: more interesting placement
-        if (node.getRoom() instanceof NodeTypes.Start) {
+        if (node.getType() instanceof NodeTypes.Start) {
             placeStart(x_min, x_max, y_min, y_max);
-        } else if (node.getRoom() instanceof NodeTypes.Exit) {
+        } else if (node.getType() instanceof NodeTypes.Exit) {
             placeExit(x_min, x_max, y_min, y_max);
-        } else if (node.getRoom() instanceof NodeTypes.Enemies) {
+        } else if (node.getType() instanceof NodeTypes.Enemies) {
             placeEnemies(x_min, x_max, y_min, y_max);
         }
 

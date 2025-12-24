@@ -1,0 +1,71 @@
+{
+  "fitness" : 0.0,
+  "nodes" : [ {
+    "id" : 4,
+    "type" : "Empty",
+    "depth" : 0,
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 0,
+    "type" : "Enemies",
+    "depth" : 0,
+    "difficulty" : 0.9452916,
+    "reward" : 0.0
+  }, {
+    "id" : 5,
+    "type" : "Enemies",
+    "depth" : 0,
+    "difficulty" : 0.99966216,
+    "reward" : 0.0
+  }, {
+    "id" : 6,
+    "type" : "Treasure",
+    "depth" : 0,
+    "difficulty" : 0.0,
+    "reward" : 0.956344
+  }, {
+    "id" : 3,
+    "type" : "Treasure",
+    "depth" : 0,
+    "difficulty" : 0.0,
+    "reward" : 0.88472587
+  }, {
+    "id" : 1,
+    "type" : "Enemies",
+    "depth" : 0,
+    "difficulty" : 0.98144543,
+    "reward" : 0.0
+  }, {
+    "id" : 2,
+    "type" : "Enemies",
+    "depth" : 0,
+    "difficulty" : 0.98144543,
+    "reward" : 0.0
+  } ],
+  "edges" : [ {
+    "from" : 0,
+    "to" : 1,
+    "direction" : "LEFT"
+  }, {
+    "from" : 0,
+    "to" : 2,
+    "direction" : "RIGHT"
+  }, {
+    "from" : 0,
+    "to" : 3,
+    "direction" : "UP"
+  }, {
+    "from" : 0,
+    "to" : 4,
+    "direction" : "DOWN"
+  }, {
+    "from" : 3,
+    "to" : 6,
+    "direction" : "UP"
+  }, {
+    "from" : 2,
+    "to" : 5,
+    "direction" : "DOWN"
+  } ]
+}

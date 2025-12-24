@@ -1,14 +1,16 @@
-package com.codingame.game.tree;
+package com.codingame.game.algorithm;
 
 import com.codingame.game.move.Direction;
+import com.codingame.game.tree.DungeonTree;
+import com.codingame.game.tree.NodeTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class MapElites {
-    final static int GENERATIONS = 100000;
-//    final static int GENERATIONS = 10_000_000;
+    final static int GENERATIONS_DEFAULT = 10_000_000;
+    final static int BASE_POPULATION = 100;
 
     private static DungeonTree getRandomNode(DungeonTree root) {
         List<DungeonTree> nodes = new ArrayList<>();
@@ -18,13 +20,13 @@ public final class MapElites {
 
 // ------------------------- mutations -------------------------
     private static void changeRoomType(DungeonTree tree) {
-        tree.setRoom(NodeTypes.getRandomRoom());
+        tree.setType(NodeTypes.getRandomRoom());
     }
 
     private static void swapRoomTypes(DungeonTree tree1, DungeonTree tree2) {
-        NodeTypes.Base temp = tree1.getRoom();
-        tree1.setRoom(tree2.getRoom());
-        tree2.setRoom(temp);
+        NodeTypes.Base temp = tree1.getType();
+        tree1.setType(tree2.getType());
+        tree2.setType(temp);
     }
 
     private static void swapSubtrees(DungeonTree tree) {
@@ -70,11 +72,11 @@ public final class MapElites {
             removed = tree.getRightChild();
             tree.setRightChild(null);
         }
-        if (removed != null && removed.getRoom() instanceof NodeTypes.Start) {
-            tree.setRoom(new NodeTypes.Start());
+        if (removed != null && removed.getType() instanceof NodeTypes.Start) {
+            tree.setType(new NodeTypes.Start());
         }
-        if (removed != null && removed.getRoom() instanceof NodeTypes.Exit) {
-            tree.setRoom(new NodeTypes.Exit());
+        if (removed != null && removed.getType() instanceof NodeTypes.Exit) {
+            tree.setType(new NodeTypes.Exit());
         }
     }
 
@@ -134,6 +136,10 @@ public final class MapElites {
 
 // ------------------------- algorithm -------------------------
     public static MapElitesArchive run() {
+        return MapElites.run(GENERATIONS_DEFAULT);
+    }
+
+    public static MapElitesArchive run(int generations_num) {
         // -- initialize
         MapElitesArchive archive = new MapElitesArchive(
                 Fitness::averageDifficulty,
@@ -142,9 +148,9 @@ public final class MapElites {
                 0.1f, 0.7f,
                 0.2f, 0.8f
         );
-        archive.populateArchive(100);
+        archive.populateArchive(BASE_POPULATION);
         // -- main loop
-        for (int generation = 0; generation < GENERATIONS; generation++) {
+        for (int generation = 0; generation < generations_num; generation++) {
             float rand = (float)Math.random();
             if (rand < 0.4f) {
                 // mutation
@@ -166,4 +172,10 @@ public final class MapElites {
         return archive;
     }
 
+    public static void main(String[] args) {
+        int numGenerations = 10000;
+        MapElitesArchive res = MapElites.run(numGenerations);
+        res.print();
+        res.serializeArchive(numGenerations);
+    }
 }

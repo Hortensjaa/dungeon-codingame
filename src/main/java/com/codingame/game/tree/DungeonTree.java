@@ -17,7 +17,7 @@ public class DungeonTree {
 
     // data
     @Setter
-    private NodeTypes.Base room;
+    private NodeTypes.Base type;
     //children
     private DungeonTree rightChild = null;
     private DungeonTree leftChild = null;
@@ -26,21 +26,22 @@ public class DungeonTree {
     // parent
     private DungeonTree parent = null;
     private Direction parentDirection; // if parent direction is top, there is no topChild etc.
+    @Setter
     private int depth;
 
     // --------------- constructors ---------------
-    public DungeonTree(NodeTypes.Base room, Direction parentDirection) {
-        this.room = room;
+    public DungeonTree(NodeTypes.Base type, Direction parentDirection) {
+        this.type = type;
         this.parentDirection = parentDirection;
     }
 
     public DungeonTree(Direction parentDirection) {
-        this.room = NodeTypes.getRandomRoom();
+        this.type = NodeTypes.getRandomRoom();
         this.parentDirection = parentDirection;
     }
 
     public DungeonTree(Direction parentDirection, DungeonTree parent) {
-        this.room = NodeTypes.getRandomRoom();
+        this.type = NodeTypes.getRandomRoom();
         this.parentDirection = parentDirection;
         this.parent = parent;
     }
@@ -56,14 +57,14 @@ public class DungeonTree {
         // Find the two most distant leaves for Start and Exit
         DungeonTree[] mostDistantLeaves = findMostDistantLeaves();
         if (mostDistantLeaves[0] != null) {
-            mostDistantLeaves[0].room = new NodeTypes.Start();
+            mostDistantLeaves[0].type = new NodeTypes.Start();
         }
         if (mostDistantLeaves[1] != null) {
-            mostDistantLeaves[1].room = new NodeTypes.Exit();
+            mostDistantLeaves[1].type = new NodeTypes.Exit();
         }
     }
 
-    boolean isLeaf() {
+    public boolean isLeaf() {
         return leftChild == null && rightChild == null && bottomChild == null && topChild == null;
     }
 
@@ -74,7 +75,7 @@ public class DungeonTree {
             float branchingFactorMultiplier
     ) {
         this.depth = currentDepth;
-        room = NodeTypes.getRandomRoom();
+        type = NodeTypes.getRandomRoom();
 
         if (currentDepth >= maxDepth) {
             return;
@@ -154,7 +155,7 @@ public class DungeonTree {
         if (bottomChild != null) bottomChild.collectLeaves(leaves);
     }
 
-    int getTreeDistance(DungeonTree a, DungeonTree b) {
+    public int getTreeDistance(DungeonTree a, DungeonTree b) {
         if (a == b) return 0;
 
         Map<DungeonTree, Integer> distFromA = new HashMap<>();
@@ -236,7 +237,7 @@ public class DungeonTree {
         for (int i = 0; i < depth; i++) {
             sb.append("-");
         }
-        System.out.println(sb.toString() + room.name);
+        System.out.println(sb.toString() + type.name);
         if (topChild != null) {
             System.out.println(sb.toString() + "top: ");
             topChild.print(depth + 1);
@@ -260,7 +261,7 @@ public class DungeonTree {
     }
 
     private DungeonTree deepCopy(DungeonTree parent) {
-        DungeonTree copy = new DungeonTree(this.room, this.parentDirection);
+        DungeonTree copy = new DungeonTree(this.type, this.parentDirection);
         copy.parent = parent;
         if (leftChild != null) {
             copy.leftChild = leftChild.deepCopy(copy);
@@ -290,8 +291,8 @@ public class DungeonTree {
         if (bottomChild != null) bottomChild.collectNodes(out);
     }
 
-    boolean isStartOrExit() {
-        return room instanceof NodeTypes.Start || room instanceof NodeTypes.Exit;
+    public boolean isStartOrExit() {
+        return type instanceof NodeTypes.Start || type instanceof NodeTypes.Exit;
     }
 
     public int countNodes() {
@@ -306,10 +307,10 @@ public class DungeonTree {
         boolean hasStart = false;
         boolean hasExit = false;
         for (DungeonTree node : nodes) {
-            if (node.room instanceof NodeTypes.Start) {
+            if (node.type instanceof NodeTypes.Start) {
                 hasStart = true;
             }
-            if (node.room instanceof NodeTypes.Exit) {
+            if (node.type instanceof NodeTypes.Exit) {
                 hasExit = true;
             }
         }
