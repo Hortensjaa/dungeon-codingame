@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 class EdgeDTO{
     int from;
     int to;
-    String direction;
 }
 
 
@@ -66,10 +65,9 @@ public class DungeonTreeSerializer {
                     node.getType().getReward()
             ));
 
-            addEdge(edges, ids, node, node.getLeftChild(), Direction.LEFT.getName());
-            addEdge(edges, ids, node, node.getRightChild(), Direction.RIGHT.getName());
-            addEdge(edges, ids, node, node.getTopChild(), Direction.UP.getName());
-            addEdge(edges, ids, node, node.getBottomChild(), Direction.DOWN.getName());
+            addEdge(edges, ids, node, node.getFirstChild());
+            addEdge(edges, ids, node, node.getSecondChild());
+            addEdge(edges, ids, node, node.getThirdChild());
         }
 
         return new DungeonTreeDTO(fitness, nodes, edges);
@@ -86,10 +84,9 @@ public class DungeonTreeSerializer {
             DungeonTree cur = queue.poll();
 
             for (DungeonTree child : Arrays.asList(
-                    cur.getLeftChild(),
-                    cur.getRightChild(),
-                    cur.getTopChild(),
-                    cur.getBottomChild()
+                    cur.getFirstChild(),
+                    cur.getSecondChild(),
+                    cur.getThirdChild()
             )) {
                 if (child != null && !ids.containsKey(child)) {
                     ids.put(child, nextId++);
@@ -103,14 +100,12 @@ public class DungeonTreeSerializer {
             List<EdgeDTO> edges,
             Map<DungeonTree, Integer> ids,
             DungeonTree from,
-            DungeonTree to,
-            String direction
+            DungeonTree to
     ) {
         if (to != null) {
             edges.add(new EdgeDTO(
                     ids.get(from),
-                    ids.get(to),
-                    direction
+                    ids.get(to)
             ));
         }
     }
@@ -130,27 +125,8 @@ public class DungeonTreeSerializer {
         for (EdgeDTO e : dto.getEdges()) {
             DungeonTree from = nodes.get(e.getFrom());
             DungeonTree to = nodes.get(e.getTo());
-
             childrenIds.add(e.getTo());
-
-            String dirString = e.getDirection();
-            Direction direction = Direction.fromString(dirString);
-
-            switch (direction) {
-                case LEFT:
-                    from.setLeftChild(to);
-                    break;
-                case RIGHT:
-                    from.setRightChild(to);
-                    break;
-                case UP:
-                    from.setTopChild(to);
-                    break;
-                case DOWN:
-                    from.setBottomChild(to);
-                    break;
-            }
-
+            from.addChild(to);
         }
 
         DungeonTree root = null;
@@ -174,14 +150,12 @@ public class DungeonTreeSerializer {
     private static void recomputeDepth(DungeonTree node, int depth) {
         node.setDepth(depth);
 
-        if (node.getLeftChild() != null)
-            recomputeDepth(node.getLeftChild(), depth + 1);
-        if (node.getRightChild() != null)
-            recomputeDepth(node.getRightChild(), depth + 1);
-        if (node.getTopChild() != null)
-            recomputeDepth(node.getTopChild(), depth + 1);
-        if (node.getBottomChild() != null)
-            recomputeDepth(node.getBottomChild(), depth + 1);
+        if (node.getFirstChild() != null)
+            recomputeDepth(node.getFirstChild(), depth + 1);
+        if (node.getSecondChild() != null)
+            recomputeDepth(node.getSecondChild(), depth + 1);
+        if (node.getThirdChild() != null)
+            recomputeDepth(node.getThirdChild(), depth + 1);
     }
 
     // ------------------ API ------------------

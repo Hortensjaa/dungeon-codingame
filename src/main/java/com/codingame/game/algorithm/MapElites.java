@@ -5,7 +5,9 @@ import com.codingame.game.tree.DungeonTree;
 import com.codingame.game.tree.NodeTypes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class MapElites {
@@ -29,49 +31,19 @@ public final class MapElites {
         tree2.setType(temp);
     }
 
-    private static void swapSubtrees(DungeonTree tree) {
-        if (tree.getParentDirection() == Direction.LEFT || tree.getParentDirection() == Direction.RIGHT) {
-            DungeonTree top = tree.getTopChild();
-            DungeonTree bottom = tree.getBottomChild();
-            tree.setTopChild(bottom);
-            tree.setBottomChild(top);
-        } else {
-            DungeonTree left = tree.getLeftChild();
-            DungeonTree right = tree.getRightChild();
-            tree.setLeftChild(right);
-            tree.setRightChild(left);
-        }
-    }
-
     private static void addChildNode(DungeonTree tree) {
-        float rand = (float)Math.random();
-        if (rand < 0.25f && tree.getTopChild() == null && tree.getParentDirection() != Direction.DOWN) {
-            tree.setTopChild(new DungeonTree(Direction.DOWN));
-        } else if (rand < 0.5f && tree.getBottomChild() == null && tree.getParentDirection() != Direction.UP) {
-            tree.setBottomChild(new DungeonTree(Direction.UP));
-        } else if (rand < 0.75f && tree.getLeftChild() == null && tree.getParentDirection() != Direction.RIGHT) {
-            tree.setLeftChild(new DungeonTree(Direction.RIGHT));
-        } else if (tree.getRightChild() == null && tree.getParentDirection() != Direction.LEFT) {
-            tree.setRightChild(new DungeonTree(Direction.LEFT));
+        if (tree.getChildren().size() < 3) {
+            tree.addChild(new DungeonTree(tree));
         }
     }
 
     private static void removeChildNode(DungeonTree tree) {
-        float rand = (float)Math.random();
-        DungeonTree removed = null;
-        if (rand < 0.25f && tree.getTopChild() != null) {
-            removed = tree.getTopChild();
-            tree.setTopChild(null);
-        } else if (rand < 0.5f && tree.getBottomChild() != null) {
-            removed = tree.getBottomChild();
-            tree.setBottomChild(null);
-        } else if (rand < 0.75f && tree.getLeftChild() != null) {
-            removed = tree.getLeftChild();
-            tree.setLeftChild(null);
-        } else if (tree.getRightChild() != null) {
-            removed = tree.getRightChild();
-            tree.setRightChild(null);
-        }
+        HashSet<DungeonTree> children = tree.getChildren();
+
+        if (children.isEmpty()) return; // shouldn't happen, but just in case
+
+        DungeonTree removed = tree.removeRandomChild();
+
         if (removed != null && removed.getType() instanceof NodeTypes.Start) {
             tree.setType(new NodeTypes.Start());
         }
@@ -92,22 +64,18 @@ public final class MapElites {
                 addChildNode(randomChild);
             }
         } else if (randomChild.isStartOrExit()) {
-             if (rand < 0.25f) {
-                swapSubtrees(randomChild);
-            } else if (rand < 0.5f) {
+             if (rand < 0.33f) {
                  DungeonTree randomChild2 = getRandomNode(treeCopy);
                  swapRoomTypes(randomChild, randomChild2);
-            } else if (rand < 0.75f) {
+            } else if (rand < 0.66f) {
                 addChildNode(randomChild);
             } else {
                 removeChildNode(randomChild);
             }
         } else {
-            if (rand < 0.25f) {
+            if (rand < 0.35f) {
                 changeRoomType(randomChild);
-            } else if (rand < 0.5f) {
-                swapSubtrees(randomChild);
-            } else if (rand < 0.75f) {
+            } else if (rand < 0.7f) {
                 addChildNode(randomChild);
             } else {
                 removeChildNode(randomChild);
@@ -119,18 +87,17 @@ public final class MapElites {
 // ------------------------- crossover -------------------------
     private static DungeonTree crossover(DungeonTree parent1, DungeonTree parent2) {
         DungeonTree child = parent1.deepCopy();
-        if (Math.random() < 0.5f && parent2.getLeftChild() != null) {
-            child.setLeftChild(parent2.getLeftChild().deepCopy());
-        }
-        if (Math.random() < 0.5f && parent2.getRightChild() != null) {
-            child.setRightChild(parent2.getRightChild().deepCopy());
-        }
-        if (Math.random() < 0.5f && parent2.getTopChild() != null) {
-            child.setTopChild(parent2.getTopChild().deepCopy());
-        }
-        if (Math.random() < 0.5f && parent2.getBottomChild() != null) {
-            child.setBottomChild(parent2.getBottomChild().deepCopy());
-        }
+
+        List<DungeonTree> children1 = new ArrayList<>(child.getChildren());
+        List<DungeonTree> children2 = new ArrayList<>(parent2.getChildren());
+
+        if (children1.isEmpty() || children2.isEmpty()) return child;
+
+        child.removeRandomChild();
+
+        DungeonTree toAdd = parent2.getRandomChild();
+        child.addChild(toAdd.deepCopy());
+
         return child;
     }
 

@@ -18,6 +18,8 @@ public class NodeTypes {
                 return new Enemies(difficulty);
             case "Treasure":
                 return new Treasure(reward);
+            case "EnemyAndTreasure":
+                return new EnemyAndTreasure(difficulty, reward);
             default:
                 throw new IllegalArgumentException("Unknown node type: " + type);
         }
@@ -25,10 +27,12 @@ public class NodeTypes {
 
     public static Base getRandomRoom() {
         double r = Math.random();
-        if (r < 0.5) {
+        if (r < 0.25) {
             return new Empty();
-        } else if (r < 0.75) {
+        } else if (r < 0.5) {
             return new Enemies((float) (Math.random()));
+        } else if (r < 0.75) {
+            return new EnemyAndTreasure((float) (Math.random()), (float) (Math.random()));
         } else {
             return new Treasure((float) (Math.random()));
         }
@@ -68,6 +72,12 @@ public class NodeTypes {
     public static class Treasure extends Base {
         Treasure(float reward) {
             super(0, reward, "Treasure");
+        }
+    }
+
+    public static class EnemyAndTreasure extends Base {
+        EnemyAndTreasure(float difficulty, float reward) {
+            super(difficulty, reward, "EnemyAndTreasure");
         }
     }
 }

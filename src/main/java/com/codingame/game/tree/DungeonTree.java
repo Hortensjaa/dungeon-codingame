@@ -5,45 +5,36 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Getter
-@NoArgsConstructor
 public class DungeonTree {
 
     // data
     @Setter
     private NodeTypes.Base type;
     //children
-    private DungeonTree rightChild = null;
-    private DungeonTree leftChild = null;
-    private DungeonTree topChild = null;
-    private DungeonTree bottomChild = null;
+    private DungeonTree firstChild = null;
+    private DungeonTree secondChild = null;
+    private DungeonTree thirdChild = null;
     // parent
     private DungeonTree parent = null;
-    private Direction parentDirection; // if parent direction is top, there is no topChild etc.
     @Setter
     private int depth;
 
     // --------------- constructors ---------------
-    public DungeonTree(NodeTypes.Base type, Direction parentDirection) {
+    public DungeonTree(NodeTypes.Base type) {
         this.type = type;
-        this.parentDirection = parentDirection;
     }
 
-    public DungeonTree(Direction parentDirection) {
+    public DungeonTree(DungeonTree parent) {
         this.type = NodeTypes.getRandomRoom();
-        this.parentDirection = parentDirection;
-    }
-
-    public DungeonTree(Direction parentDirection, DungeonTree parent) {
-        this.type = NodeTypes.getRandomRoom();
-        this.parentDirection = parentDirection;
         this.parent = parent;
+    }
+
+    public DungeonTree() {
+        this.type = NodeTypes.getRandomRoom();
     }
 
     // --------------- building tree ---------------
@@ -65,7 +56,8 @@ public class DungeonTree {
     }
 
     public boolean isLeaf() {
-        return leftChild == null && rightChild == null && bottomChild == null && topChild == null;
+        // checking firstChild should be enough, but better safe than sorry
+        return firstChild == null && secondChild == null && thirdChild == null;
     }
 
     private void generateSubtree(
@@ -81,39 +73,20 @@ public class DungeonTree {
             return;
         }
 
-        leftChild = (Math.random() < branchingFactor && parentDirection != Direction.LEFT) ?
-                new DungeonTree(Direction.RIGHT, this) : null;
-        rightChild = (Math.random() < branchingFactor && parentDirection != Direction.RIGHT) ?
-                new DungeonTree(Direction.LEFT, this) : null;
-        bottomChild = (Math.random() < branchingFactor && parentDirection != Direction.DOWN) ?
-                new DungeonTree(Direction.UP, this) : null;
-        topChild = (Math.random() < branchingFactor && parentDirection != Direction.UP) ?
-                new DungeonTree(Direction.DOWN, this) : null;
-
-        if (leftChild != null) leftChild.generateSubtree(
-                currentDepth + 1,
-                maxDepth,
-                branchingFactor * branchingFactorMultiplier,
-                branchingFactorMultiplier
-        );
-        if (rightChild != null) rightChild.generateSubtree(
-                currentDepth + 1,
-                maxDepth,
-                branchingFactor * branchingFactorMultiplier,
-                branchingFactorMultiplier
-        );
-        if (bottomChild != null) bottomChild.generateSubtree(
-                currentDepth + 1,
-                maxDepth,
-                branchingFactor * branchingFactorMultiplier,
-                branchingFactorMultiplier
-        );
-        if (topChild != null) topChild.generateSubtree(
-                currentDepth + 1,
-                maxDepth,
-                branchingFactor * branchingFactorMultiplier,
-                branchingFactorMultiplier
-        );
+        double randomValue = Math.random();
+        firstChild = (randomValue < branchingFactor ? new DungeonTree(this) : null);
+        secondChild = (randomValue < branchingFactor * 0.75 ? new DungeonTree(this) : null);
+        thirdChild = (randomValue < branchingFactor * 0.5 ? new DungeonTree(this) : null);
+        float newBranchingFactor = branchingFactor * branchingFactorMultiplier;
+        if (firstChild != null) {
+            firstChild.generateSubtree(currentDepth + 1, maxDepth, newBranchingFactor, branchingFactorMultiplier);
+        }
+        if (secondChild != null) {
+            secondChild.generateSubtree(currentDepth + 1, maxDepth, newBranchingFactor, branchingFactorMultiplier);
+        }
+        if (thirdChild != null) {
+            thirdChild.generateSubtree(currentDepth + 1, maxDepth, newBranchingFactor, branchingFactorMultiplier);
+        }
     }
 
     private DungeonTree[] findMostDistantLeaves() {
@@ -149,10 +122,9 @@ public class DungeonTree {
             leaves.add(this);
             return;
         }
-        if (leftChild != null) leftChild.collectLeaves(leaves);
-        if (rightChild != null) rightChild.collectLeaves(leaves);
-        if (topChild != null) topChild.collectLeaves(leaves);
-        if (bottomChild != null) bottomChild.collectLeaves(leaves);
+        if (firstChild != null) firstChild.collectLeaves(leaves);
+        if (secondChild != null) secondChild.collectLeaves(leaves);
+        if (thirdChild != null) thirdChild.collectLeaves(leaves);
     }
 
     public int getTreeDistance(DungeonTree a, DungeonTree b) {
@@ -181,7 +153,6 @@ public class DungeonTree {
         return Integer.MAX_VALUE;
     }
 
-
     private boolean findPath(DungeonTree current, DungeonTree target, List<DungeonTree> path) {
         if (current == null) return false;
 
@@ -189,91 +160,138 @@ public class DungeonTree {
 
         if (current == target) return true;
 
-        if (findPath(current.leftChild, target, path)) return true;
-        if (findPath(current.rightChild, target, path)) return true;
-        if (findPath(current.topChild, target, path)) return true;
-        if (findPath(current.bottomChild, target, path)) return true;
+        if (findPath(current.firstChild, target, path)) return true;
+        if (findPath(current.secondChild, target, path)) return true;
+        if (findPath(current.thirdChild, target, path)) return true;
 
         path.remove(path.size() - 1);
         return false;
     }
 
-    // --------------- setters ---------------
-    public void setTopChild(DungeonTree newChild) {
-        this.topChild = newChild;
-        if (topChild != null) {
-            topChild.parentDirection = Direction.DOWN;
-            topChild.parent = this;
+    // --------------- set and get helpers ---------------
+    public void addChild(DungeonTree child) {
+        if (firstChild == null) {
+            setFirstChild(child);
+        } else if (secondChild == null) {
+            setSecondChild(child);
+        } else if (thirdChild == null) {
+            setThirdChild(child);
+        } else {
+            System.out.println("Cannot add more than 3 children to a DungeonTree node.");
         }
     }
 
-    public void setLeftChild(DungeonTree newChild) {
-        this.leftChild = newChild;
-        if (leftChild != null) {
-            leftChild.parentDirection = Direction.RIGHT;
-            leftChild.parent = this;
+    public void setFirstChild(DungeonTree newChild) {
+        this.firstChild = newChild;
+        if (firstChild != null) {
+            firstChild.parent = this;
         }
     }
 
-    public void setRightChild(DungeonTree newChild) {
-        this.rightChild = newChild;
-        if (rightChild != null) {
-            rightChild.parentDirection = Direction.LEFT;
-            rightChild.parent = this;
+    public void setSecondChild(DungeonTree newChild) {
+        this.secondChild = newChild;
+        if (secondChild != null) {
+            secondChild.parent = this;
         }
     }
 
-    public void setBottomChild(DungeonTree newChild) {
-        this.bottomChild = newChild;
-        if (bottomChild != null) {
-            bottomChild.parentDirection = Direction.UP;
-            bottomChild.parent = this;
+    public void setThirdChild(DungeonTree newChild) {
+        this.thirdChild = newChild;
+        if (thirdChild != null) {
+            thirdChild.parent = this;
         }
+    }
+
+    public HashSet<DungeonTree> getChildren() {
+        HashSet<DungeonTree> children = new HashSet<>();
+        if (firstChild != null) children.add(firstChild);
+        if (secondChild != null) children.add(secondChild);
+        if (thirdChild != null) children.add(thirdChild);
+        return children;
+    }
+
+    public HashSet<DungeonTree> getGrandchildren() {
+        HashSet<DungeonTree> grandchildren = new HashSet<>();
+        if (firstChild != null) {
+            grandchildren.addAll(firstChild.getChildren());
+        }
+        if (secondChild != null) {
+            grandchildren.addAll(secondChild.getChildren());
+        }
+        if (thirdChild != null) {
+            grandchildren.addAll(thirdChild.getChildren());
+        }
+        return grandchildren;
+    }
+
+    public DungeonTree removeChild(int childIndex) {
+        DungeonTree removed;
+        if (childIndex == 0) {
+            removed = firstChild;
+            firstChild = null;
+            if (this.thirdChild != null) {
+                firstChild = thirdChild;
+                thirdChild = null;
+            }
+            else if (this.secondChild != null) {
+                firstChild = secondChild;
+                secondChild = null;
+            }
+        } else if (childIndex == 1) {
+            removed = secondChild;
+            secondChild = null;
+            if (this.thirdChild != null) {
+                secondChild = thirdChild;
+                thirdChild = null;
+            }
+        } else {
+            removed = thirdChild;
+            thirdChild = null;
+        }
+        if (removed == null) {
+            System.out.println("Cannot remove - no child at index " + childIndex);
+        } else {
+            removed.parent = null;
+        }
+        return removed;
+    }
+
+    public DungeonTree removeRandomChild() {
+        HashSet<DungeonTree> children = getChildren();
+        if (children.isEmpty()) return null;
+
+        int indexToRemove = (int) (Math.random() * children.size());
+        DungeonTree childToRemove = new ArrayList<>(children).get(indexToRemove);
+
+        if (childToRemove == firstChild) {
+            return removeChild(0);
+        } else if (childToRemove == secondChild) {
+            return removeChild(1);
+        } else {
+            return removeChild(2);
+        }
+    }
+
+    public DungeonTree getRandomChild() {
+        HashSet<DungeonTree> children = getChildren();
+        if (children.isEmpty()) return null;
+
+        int indexToGet = (int) (Math.random() * children.size());
+        return new ArrayList<>(children).get(indexToGet);
     }
 
     // --------------- testing ---------------
-    private void print(int depth) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            sb.append("-");
-        }
-        System.out.println(sb.toString() + type.name);
-        if (topChild != null) {
-            System.out.println(sb.toString() + "top: ");
-            topChild.print(depth + 1);
-        }
-        if (rightChild != null) {
-            System.out.println(sb.toString() + "right: ");
-            rightChild.print(depth + 1);
-        }
-        if (leftChild != null) {
-            System.out.println(sb.toString() + "left: ");
-            leftChild.print(depth + 1);
-        }
-        if (bottomChild != null) {
-            System.out.println(sb.toString() + "bottom: ");
-            bottomChild.print(depth + 1);
-        }
-    }
-
-    public void print() {
-        print(0);
-    }
-
     private DungeonTree deepCopy(DungeonTree parent) {
-        DungeonTree copy = new DungeonTree(this.type, this.parentDirection);
+        DungeonTree copy = new DungeonTree(this.type);
         copy.parent = parent;
-        if (leftChild != null) {
-            copy.leftChild = leftChild.deepCopy(copy);
+        if (firstChild != null) {
+            copy.firstChild = firstChild.deepCopy(copy);
         }
-        if (rightChild != null) {
-            copy.rightChild = rightChild.deepCopy(copy);
+        if (secondChild != null) {
+            copy.secondChild = secondChild.deepCopy(copy);
         }
-        if (topChild != null) {
-            copy.topChild = topChild.deepCopy(copy);
-        }
-        if (bottomChild != null) {
-            copy.bottomChild = bottomChild.deepCopy(copy);
+        if (thirdChild != null) {
+            copy.thirdChild = thirdChild.deepCopy(copy);
         }
         return copy;
     }
@@ -285,10 +303,9 @@ public class DungeonTree {
     public void collectNodes(List<DungeonTree> out) {
         out.add(this);
 
-        if (leftChild != null) leftChild.collectNodes(out);
-        if (rightChild != null) rightChild.collectNodes(out);
-        if (topChild != null) topChild.collectNodes(out);
-        if (bottomChild != null) bottomChild.collectNodes(out);
+        if (firstChild != null) firstChild.collectNodes(out);
+        if (secondChild != null) secondChild.collectNodes(out);
+        if (thirdChild != null) thirdChild.collectNodes(out);
     }
 
     public boolean isStartOrExit() {
@@ -316,10 +333,4 @@ public class DungeonTree {
         }
         return hasStart && hasExit;
     }
-
-    // --------------- evaluation ---------------
-    public DungeonTreeDimensions evaluate() {
-        return DungeonTreeEvaluator.evaluateDimensions(this);
-    }
-
 }
