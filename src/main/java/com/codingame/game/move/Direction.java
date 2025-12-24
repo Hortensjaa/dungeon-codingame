@@ -3,6 +3,10 @@ package com.codingame.game.move;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public enum Direction implements Move {
@@ -30,6 +34,18 @@ public enum Direction implements Move {
             }
         }
         throw new IllegalArgumentException("Unknown direction: " + s);
+    }
+
+    public static Direction randomDirection() {
+        Direction[] directions = values();
+        int index = (int) (Math.random() * directions.length);
+        return directions[index];
+    }
+
+    public static List<Direction> shuffledDirections() {
+        List<Direction> directions = new ArrayList<>(Arrays.asList(values()));
+        java.util.Collections.shuffle(directions);
+        return directions;
     }
 }
 

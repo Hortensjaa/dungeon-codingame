@@ -1,6 +1,8 @@
 package com.codingame.game.algorithm;
 
 import com.codingame.game.Constants;
+import com.codingame.game.generator.LayoutField;
+import com.codingame.game.generator.LayoutGenerator;
 import com.codingame.game.tree.DungeonTree;
 import com.codingame.game.tree.NodeTypes;
 
@@ -47,12 +49,21 @@ public final class Fitness {
         return (float) count / Constants.MAX_NODES;
     }
 
-    // should have start and exit
+    // should have start and exit todo: only one!!!!
     static float hasStartAndExit(DungeonTree tree) {
         if (tree.hasStartAndExit()) {
             return 1.0f;
         } else {
             return 0.0f;
+        }
+    }
+
+    static float canGenerateLayout(DungeonTree tree) {
+        try {
+            LayoutGenerator.generateLayout(tree);
+            return 1f;
+        } catch (IllegalArgumentException e) {
+            return 0f;
         }
     }
 
@@ -114,7 +125,7 @@ public final class Fitness {
     }
 
     private static float control(DungeonTree tree) {
-        return min(hasStartAndExit(tree), checkGrandchildren(tree), countNodesControl(tree));
+        return min(hasStartAndExit(tree), checkGrandchildren(tree), countNodesControl(tree), canGenerateLayout(tree));
     }
 
     // todo: find out a good way to compute diversity between two trees

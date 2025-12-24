@@ -43,41 +43,42 @@ public class NodeTypes {
     public static abstract class Base {
         float difficulty, reward;  // normalised [0,1]
         String name;
+        String shortName;
     }
 
     public static class Empty extends Base {
         Empty() {
-            super(0, 0, "Empty");
+            super(0, 0, "Empty", ".");
         }
     }
 
     public static class Start extends Base {
         public Start() {
-            super(0, 0, "Start");
+            super(0, 0, "Start", "S");
         }
     }
 
     public static class Exit extends Base {
         public Exit() {
-            super(0, 0, "Exit");
+            super(0, 0, "Exit", "X");
         }
     }
 
     public static class Enemies extends Base {
         Enemies(float difficulty) {
-            super(difficulty, 0, "Enemies");
+            super(difficulty, 0, "Enemies", "E");
         }
     }
 
     public static class Treasure extends Base {
         Treasure(float reward) {
-            super(0, reward, "Treasure");
+            super(0, reward, "Treasure", "T");
         }
     }
 
     public static class EnemyAndTreasure extends Base {
         EnemyAndTreasure(float difficulty, float reward) {
-            super(difficulty, reward, "EnemyAndTreasure");
+            super(difficulty, reward, "EnemyAndTreasure", "B");
         }
     }
 }

@@ -21,11 +21,11 @@ public class Constants {
     public static final int MIN_PARTITION_DIMENSION = MIN_ROOM_DIMENSION + 2 * WALL_OFFSET; // minimum partition width and height in cells
 
 //    tree constants
-    public static final int MAX_TREE_WIDTH = COLUMNS / MIN_PARTITION_DIMENSION;
-    public static final int MAX_TREE_HEIGHT = ROWS / MIN_PARTITION_DIMENSION;
+    public static final int MAX_LAYOUT_WIDTH = COLUMNS / MIN_PARTITION_DIMENSION;
+    public static final int MAX_LAYOUT_HEIGHT = ROWS / MIN_PARTITION_DIMENSION;
     public static final int MIN_DEPTH = 2;
     public static final int MAX_DEPTH = 5;
-    public static final int MAX_NODES = MAX_TREE_HEIGHT * MAX_TREE_WIDTH;
+    public static final int MAX_NODES = MAX_LAYOUT_HEIGHT * MAX_LAYOUT_WIDTH;
 
 //    sprites
     public static final String WALL_SPRITE = "assets/walls_32/tile_10.png";
