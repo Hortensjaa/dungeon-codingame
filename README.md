@@ -8,47 +8,63 @@ Creating good levels in roguelike games are challenging, as they need to be:
 - also **fast to generate**, like in constructive approaches (grammar based generation), but...
 - diverse (again), and so on.
   In project and then engineering thesis, I will implement hybrid procedural generation algorithm, that will fit those
-  needs by combining MAP-Elites tree creation with constructive (but with constrained randomness) dungeon generation from those trees.
-  Additionally, generated dungeons will be evaluated based on they quality, diversity and solvability and
-  conclusions will be presented at the end of the semester and then explored further in my engineering thesis.
+  needs by combining MAP-Elites tree creation with grammar based grid mapping.
 
 # Hybrid algorithm
-The goal is to create different levels fast. One of the possible approaches is to split generation into two stages:
-generating tree structure of dungeon and then mapping it on grid. Tree structures can be generated using many different
-offline algorithms - in my case it will be Map-Elites - and results will be saved in files.
-Then, during the game, tree will be mapped on grid, which is a lot faster process, but still can include some
-randomness and diversity like corridors placement, room shapes and exact content (e.g. many different rooms with
-3 enemies are possible to be generated).
+The goal is to create different levels fast. One of the possible approaches is to split generation into two parts:
+generating tree structure level "story" and then mapping it on grid. 
+Tree structures can be generated using many different offline algorithms - in my case it will be Map-Elites - and 
+results will be saved in files, so the time-consuming process of MAP-elites run is not a problem anymore.
+Then, during the game, tree will be mapped on grid, which is a lot faster process with combining backtracking
+and grammar based generation.
 
-## Stage one: Generating tree structure of dungeon
-### Generating family of trees
-I will be generation family of trees using Map-Elites algorithm, with following features:
-- todo
-### Calculating space needed
-recursion from leaves to root calculating how much place on the left, right, top and bottom is needed to draw subtrees;
-in this calculation, we treat space needed for every node as 1 - it will be mapped on grid in next space.
-```
-leaf.spaceRight = 0
-leaf.spaceLeft = 0
-leaf.spaceTop = 0
-leaf.spaceDown = 0
-...
-node.spaceRight = max(rightChild.spaceRight + 1, leftChild.spaceRight - 1, topChild.spaceRight, bottomChild.spaceRight)
-node.spaceLeft = max(rightChild.spaceLeft - 1, leftChild.spaceLeft + 1, topChild.spaceLeft, bottomChild.spaceLeft)
-node.spaceTop = max(rightChild.spaceTop, leftChild.spaceTop, topChild.spaceTop + 1, bottomChild.spaceTop - 1)
-node.spaceDown = max(rightChild.spaceDown, leftChild.spaceDown, topChild.spaceDown - 1, bottomChild.spaceDown + 1)
-```
-## Step 2: Generator
-1. Generator takes tree structure as input
-2. Partition grid based on space needed for whole tree
-3. Place rooms inside partitions and connect them with corridors
-4. * Optional: do minor changes to improve diversity between dungeons generated from the same tree
-    - swap exit and player start
-    - rotate whole grid
-    - mirror whole grid
-    - swap leaves (excluding exit)
+## Step 1: Generating tree structure of dungeon
+In the first step of the algorithm, we generate tree structures using MAP-Elites algorithm and save it to `/levels` 
+directory. It is crucial, to think about those trees as "user stories" and not grid layouts. 
+Each node of the tree represents something that user "can do" on this path. E.g.:
+<figure>
+  <img src="images/tree.png" alt="tree">
+  <figcaption><em>img 1: Example tree structure</em></figcaption>
+</figure>
+In this case, user starts in `S` (start) and needs to go to `X` (exit). 
+However, player has multiple options to play this level:
 
-## Possible usage
+* go to `E1` (enemy room 1) to get the treasure `T1` (treasure room 1), then go back to `S` and progress
+* collect loot from `T2` (treasure room 2) and then go back to `S` and progress
+* collect both treasures from `T1` and `T2` before progressing
+* skip both treasures and go directly to `E2` (enemy room 2) and then to `X` (exit)
+* from `E2`, user can also go fight optional enemy in `E3` (enemy room 3) before going to `X`.
+
+Every time users plays the game, one tree saved from `/levels` directory is chosen (randomly or based on some criteria)
+and then mapped on layout.
+
+## Step 2: Layout
+In the second step of the algorithm, chosen tree is map on layout. Layout is an intermediate representation of the level,
+which is later mapped on grid. Layout consists of rooms as single grid cells and corridors as "pointers" to its parents.
+The important thing is the fact, that from single tree, multiple layouts can be generated. For example, take a look at
+2 example layouts created from tree from img 1:
+<figure>
+  <img src="images/layout1.png" alt="layout1">
+  <figcaption><em>img 2: Example layout created from tree 1</em></figcaption>
+</figure>
+<figure>
+  <img src="images/layout2.png" alt="layout2">
+  <figcaption><em>img 3: Different layout created from tree 1</em></figcaption>
+</figure>
+Layout generation uses randomized backtracking algorithm, which tries to place rooms on grid one by one, starting from 
+the root of the tree. MAP-Elites trees are created in a way, that they are always possible to be mapped on grid *easily*.
+
+## Step 3: Mapping on grid
+From grid layout, final grid representation of the level is created. Based on the trimmed layout 
+(only rooms and corridors, trimmed "margins"), space of the grid is partitioned to give every node the same amount of space.
+Then, every room is generated using grammar based generation, which allows to create rooms of different shapes and
+with different placements of enemies and treasures inside.
+<figure>
+  <img src="images/grid.png" alt="grid">
+  <figcaption><em>img 4: Example grid created from layout 1</em></figcaption>
+</figure>
+
+# Possible usage
 After testing my algorithm on CodinGame platform, I would like to explore possibility of using it in standalone game.
 Roguelike games are great fit for procedural generation, as they usually require many different levels to be played one
 after another. Additionally, procedural generation can add to replayability of such games, as every new run can be 

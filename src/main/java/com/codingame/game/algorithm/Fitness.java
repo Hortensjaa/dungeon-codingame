@@ -71,6 +71,7 @@ public final class Fitness {
         }
     }
 
+    // todo: maybe it should be more strict in later generations (eg. 80%+)
     static float canGenerateLayout(DungeonTree tree) {
         float successRate = 0f;
         for (int i = 0; i < 5; i++) {

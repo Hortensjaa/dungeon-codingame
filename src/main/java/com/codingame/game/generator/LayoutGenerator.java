@@ -15,13 +15,11 @@ public class LayoutGenerator {
     private static final Random RANDOM = new Random();
 
     static boolean generateLayout(DungeonTree node, LayoutField[][] grid, int x, int y, Direction directionFromParent) {
-        int width = grid[0].length;
-        int height = grid.length;
-
-        // Place the current node if the spot is free
+        // if spot is not free, fail
         if (grid[y][x] != null) {
             return false;
         }
+        // Place the current node if the spot is free
         grid[y][x] = new LayoutField(node.getType(), directionFromParent);
 
         List<DungeonTree> children = new ArrayList<>(node.getChildren());
@@ -134,10 +132,10 @@ public class LayoutGenerator {
 
     //    ------------------ printer -----------------------
     public static void printLayout(LayoutField[][] layout) {
-        for (int y = 0; y < layout.length; y++) {
+        for (LayoutField[] layoutFields : layout) {
             for (int x = 0; x < layout[0].length; x++) {
-                if (layout[y][x] != null) {
-                    System.out.print(layout[y][x].toString());
+                if (layoutFields[x] != null) {
+                    System.out.print(layoutFields[x].toString());
                 } else {
                     System.out.print("[ ] ");
                 }
