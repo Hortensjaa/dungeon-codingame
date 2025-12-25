@@ -116,15 +116,30 @@ public class MapElitesArchive {
         return getRandomTree();
     }
 
-     public DungeonTree getRandomGoodTree() {
-        int xIndex = (int)(Math.random() * size);
-        int yIndex = (int)(Math.random() * size);
-        ArchiveRecord rec = archive[xIndex][yIndex];
-        if (rec != null && rec.getFitness() > 0.0f) {
-            return rec.getTree();
+    public DungeonTree getRandomGoodTree() {
+        int width = archive.length;
+        int height = archive[0].length;
+
+        int startX = (int)(Math.random() * width);
+        int startY = (int)(Math.random() * height);
+
+        for (int dy = 0; dy < height; dy++) {
+            for (int dx = 0; dx < width; dx++) {
+                int x = (startX + dx) % width;
+                int y = (startY + dy) % height;
+
+                ArchiveRecord rec = archive[x][y];
+                if (rec != null && rec.getFitness() > 0.0f) {
+                    System.out.println("Selected tree at (" + x + ", " + y + ") with fitness " + rec.getFitness());
+                    return rec.getTree();
+                }
+            }
         }
-        return getRandomGoodTree();
+
+        System.out.println("No good tree found in archive.");
+        return null;
     }
+
 
     public DungeonTree getTreeAt(int xIndex, int yIndex) {
         if (xIndex < 0 || xIndex >= size || yIndex < 0 || yIndex >= size) {
@@ -171,7 +186,7 @@ public class MapElitesArchive {
         int filledBuckets = 0;
         int validBuckets = 0;
 
-        for (int y = size - 1; y >= 0; y--) {
+        for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
                 ArchiveRecord rec = archive[x][y];
                 if (rec != null) {
@@ -200,8 +215,14 @@ public class MapElitesArchive {
                 .append(String.format(" (%.0f%%)", validPercent))
                 .append("\n\n");
 
-        sb.append("Archive map:\n");
-        for (int y = size - 1; y >= 0; y--) {
+        sb.append("Archive map:\n    ");
+        for (int x = 0; x < size; x++) {
+            sb.append(String.format("  %2d   ", x));
+        }
+        sb.append("\n");
+
+        for (int y = 0; y < size; y++) {
+            sb.append(String.format("%2d ", y));
             for (int x = 0; x < size; x++) {
                 ArchiveRecord rec = archive[x][y];
                 if (rec != null) {
@@ -212,7 +233,6 @@ public class MapElitesArchive {
             }
             sb.append("\n");
         }
-
 
         File infoFile = new File(baseDir, "info.txt");
 
@@ -226,7 +246,7 @@ public class MapElitesArchive {
     }
 
 
-    public void serializeArchive(int generationCount) {
+    public String serializeArchive(int generationCount) {
         String timestampDir = nowAsDirName();
 
         File baseDir = new File("levels", timestampDir);
@@ -254,6 +274,7 @@ public class MapElitesArchive {
                 }
             }
         }
+        return timestampDir;
     }
 
     // todo: add functions like getEasyLevel(), getHardLevel(), etc.

@@ -1,8 +1,6 @@
 package com.codingame.game.tree;
 
-import com.codingame.game.move.Direction;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.*;
@@ -20,8 +18,6 @@ public class DungeonTree {
     private DungeonTree thirdChild = null;
     // parent
     private DungeonTree parent = null;
-    @Setter
-    private int depth;
 
     // --------------- constructors ---------------
     public DungeonTree(NodeTypes.Base type) {
@@ -37,7 +33,7 @@ public class DungeonTree {
         this.type = NodeTypes.getRandomRoom();
     }
 
-    // --------------- building tree ---------------
+    // --------------- generation ---------------
     public void generateRandomTree(
             int maxDepth,
             float branchingFactor,
@@ -55,10 +51,6 @@ public class DungeonTree {
         }
     }
 
-    public boolean isLeaf() {
-        // checking firstChild should be enough, but better safe than sorry
-        return firstChild == null && secondChild == null && thirdChild == null;
-    }
 
     private void generateSubtree(
             int currentDepth,
@@ -66,7 +58,6 @@ public class DungeonTree {
             float branchingFactor,
             float branchingFactorMultiplier
     ) {
-        this.depth = currentDepth;
         type = NodeTypes.getRandomRoom();
 
         if (currentDepth >= maxDepth) {
@@ -168,7 +159,12 @@ public class DungeonTree {
         return false;
     }
 
-    // --------------- set and get helpers ---------------
+    // --------------- API ---------------
+    public boolean isLeaf() {
+        // checking firstChild should be enough, but better safe than sorry
+        return firstChild == null && secondChild == null && thirdChild == null;
+    }
+
     public void addChild(DungeonTree child) {
         if (firstChild == null) {
             setFirstChild(child);
@@ -280,7 +276,47 @@ public class DungeonTree {
         return new ArrayList<>(children).get(indexToGet);
     }
 
-    // --------------- testing ---------------
+    public void collectNodes(List<DungeonTree> out) {
+        out.add(this);
+
+        if (firstChild != null) firstChild.collectNodes(out);
+        if (secondChild != null) secondChild.collectNodes(out);
+        if (thirdChild != null) thirdChild.collectNodes(out);
+    }
+
+    public boolean isStartOrExit() {
+        return type instanceof NodeTypes.Start || type instanceof NodeTypes.Exit;
+    }
+
+    public int countNodes() {
+        List<DungeonTree> nodes = new ArrayList<>();
+        collectNodes(nodes);
+        return nodes.size();
+    }
+
+    public boolean hasStartAndExitOnce() {
+        List<DungeonTree> nodes = new ArrayList<>();
+        collectNodes(nodes);
+        boolean hasStart = false;
+        boolean hasExit = false;
+        for (DungeonTree node : nodes) {
+            if (node.type instanceof NodeTypes.Start) {
+                if (hasStart) {
+                    return false; // more than one start
+                }
+                hasStart = true;
+            }
+            if (node.type instanceof NodeTypes.Exit) {
+                if (hasExit) {
+                    return false; // more than one exit
+                }
+                hasExit = true;
+            }
+        }
+        return hasStart && hasExit;
+    }
+
+    // --------------- copy ---------------
     private DungeonTree deepCopy(DungeonTree parent) {
         DungeonTree copy = new DungeonTree(this.type);
         copy.parent = parent;
@@ -300,37 +336,17 @@ public class DungeonTree {
         return deepCopy(null);
     }
 
-    public void collectNodes(List<DungeonTree> out) {
-        out.add(this);
-
-        if (firstChild != null) firstChild.collectNodes(out);
-        if (secondChild != null) secondChild.collectNodes(out);
-        if (thirdChild != null) thirdChild.collectNodes(out);
-    }
-
-    public boolean isStartOrExit() {
-        return type instanceof NodeTypes.Start || type instanceof NodeTypes.Exit;
-    }
-
-    public int countNodes() {
-        List<DungeonTree> nodes = new ArrayList<>();
-        collectNodes(nodes);
-        return nodes.size();
-    }
-
-    public boolean hasStartAndExit() {
-        List<DungeonTree> nodes = new ArrayList<>();
-        collectNodes(nodes);
-        boolean hasStart = false;
-        boolean hasExit = false;
-        for (DungeonTree node : nodes) {
-            if (node.type instanceof NodeTypes.Start) {
-                hasStart = true;
-            }
-            if (node.type instanceof NodeTypes.Exit) {
-                hasExit = true;
-            }
+    // --------------- testing ---------------
+    public void printBFS() {
+        Queue<DungeonTree> queue = new LinkedList<>();
+        queue.add(this);
+        while (!queue.isEmpty()) {
+            DungeonTree current = queue.poll();
+            System.out.print(current.type.getShortName() + " ");
+            if (current.firstChild != null) queue.add(current.firstChild);
+            if (current.secondChild != null) queue.add(current.secondChild);
+            if (current.thirdChild != null) queue.add(current.thirdChild);
         }
-        return hasStart && hasExit;
+        System.out.println();
     }
 }

@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import com.codingame.game.move.Direction;
+import com.codingame.game.generator.LayoutField;
+import com.codingame.game.generator.LayoutGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,6 @@ class EdgeDTO{
 class NodeDTO{
         int id;
         String type;
-        int depth;
         float difficulty;
         float reward;
 }
@@ -60,14 +60,13 @@ public class DungeonTreeSerializer {
             nodes.add(new NodeDTO(
                     id,
                     node.getType().getName(),
-                    node.getDepth(),
                     node.getType().getDifficulty(),
                     node.getType().getReward()
             ));
 
-            addEdge(edges, ids, node, node.getFirstChild());
-            addEdge(edges, ids, node, node.getSecondChild());
-            addEdge(edges, ids, node, node.getThirdChild());
+            if (node.getFirstChild() != null) addEdge(edges, ids, node, node.getFirstChild());
+            if (node.getSecondChild() != null) addEdge(edges, ids, node, node.getSecondChild());
+            if (node.getThirdChild() != null) addEdge(edges, ids, node, node.getThirdChild());
         }
 
         return new DungeonTreeDTO(fitness, nodes, edges);
@@ -142,20 +141,7 @@ public class DungeonTreeSerializer {
             throw new IllegalStateException("No root node found in DungeonTreeDTO");
         }
 
-        recomputeDepth(root, 0);
-
         return root;
-    }
-
-    private static void recomputeDepth(DungeonTree node, int depth) {
-        node.setDepth(depth);
-
-        if (node.getFirstChild() != null)
-            recomputeDepth(node.getFirstChild(), depth + 1);
-        if (node.getSecondChild() != null)
-            recomputeDepth(node.getSecondChild(), depth + 1);
-        if (node.getThirdChild() != null)
-            recomputeDepth(node.getThirdChild(), depth + 1);
     }
 
     // ------------------ API ------------------
@@ -180,9 +166,9 @@ public class DungeonTreeSerializer {
 //    ------------------- test ------------------
 public static void main(String[] args) throws Exception {
     DungeonTree original = new DungeonTree();
-    original.generateRandomTree(4, 0.8f, 0.9f);
+    original.generateRandomTree(4, 0.6f, 0.9f);
 
-    File file = new File("levels/dungeon_tree2.json");
+    File file = new File("levels/dungeon_tree.json");
 
     DungeonTreeSerializer.writeToFile(original, file);
 
@@ -191,7 +177,18 @@ public static void main(String[] args) throws Exception {
     System.out.println("Original nodes: " + original.countNodes());
     System.out.println("Loaded nodes:   " + loaded.countNodes());
 
-    System.out.println("Has start+exit: " + loaded.hasStartAndExit());
+    System.out.println("Original BFS:");
+    original.printBFS();
+    System.out.println("Loaded BFS:");
+    loaded.printBFS();
+
+    LayoutField[][] l1 = LayoutGenerator.generateLayout(original, 3);
+    LayoutField[][] l2 = LayoutGenerator.generateLayout(loaded, 3);
+
+    System.out.println();
+    LayoutGenerator.printLayout(l1);
+    System.out.println();
+    LayoutGenerator.printLayout(l2);
 }
 
 }

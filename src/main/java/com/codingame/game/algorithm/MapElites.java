@@ -140,7 +140,7 @@ public final class MapElites {
     }
 
     public static void main(String[] args) {
-        int numGenerations = 10000;
+        int numGenerations = 1_000_000;
         MapElitesArchive res = MapElites.run(numGenerations);
         res.print();
         res.serializeArchive(numGenerations);

@@ -1,6 +1,7 @@
 package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
+import com.codingame.game.move.Coord;
 import com.codingame.game.move.Direction;
 import com.codingame.game.tree.DungeonTree;
 
@@ -13,42 +14,73 @@ public class LayoutGenerator {
 
     private static final Random RANDOM = new Random();
 
-    public static boolean generateLayout(DungeonTree node, LayoutField[][] grid, int x, int y, Direction directionFromParent) {
+    static boolean generateLayout(DungeonTree node, LayoutField[][] grid, int x, int y, Direction directionFromParent) {
         int width = grid[0].length;
         int height = grid.length;
 
-        if (grid[y][x] != null) return false;
-
+        // Place the current node if the spot is free
+        if (grid[y][x] != null) {
+            return false;
+        }
         grid[y][x] = new LayoutField(node.getType(), directionFromParent);
 
         List<DungeonTree> children = new ArrayList<>(node.getChildren());
-        Collections.shuffle(children, RANDOM);
+        Collections.shuffle(children, RANDOM);  // Shuffle for diversity
+        return tryPlaceChildren(grid, x, y, children, 0);
+    }
 
-        for (DungeonTree child : children) {
-            List<Direction> directions = Direction.shuffledDirections();
-            boolean placed = false;
+    /**
+     * Exhaustive backtracking with shuffled directions: Try all directions for each child in shuffled order.
+     * childIndex: Current child to place (0 to children.size()-1).
+     */
+    private static boolean tryPlaceChildren(LayoutField[][] grid, int parentX, int parentY, List<DungeonTree> children, int childIndex) {
+        int width = grid[0].length;
+        int height = grid.length;
 
-            for (Direction dir : directions) {
-                int nx = x + dir.getDx();
-                int ny = y + dir.getDy();
+        if (childIndex == children.size()) {
+            return true;  // All children placed
+        }
 
-                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                    if (grid[ny][nx] == null) {
-                        if (generateLayout(child, grid, nx, ny, dir.opposite())) {
-                            placed = true;
-                            break;
-                        }
+        DungeonTree child = children.get(childIndex);
+        List<Direction> directions = Direction.shuffledDirections();
+
+        for (Direction dir : directions) {
+            int nx = parentX + dir.getDx();
+            int ny = parentY + dir.getDy();
+
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height && grid[ny][nx] == null) {
+                // Try placing this child and recurse to next child
+                if (generateLayout(child, grid, nx, ny, dir.opposite())) {
+                    // Record position for backtracking
+                    grid[parentY][parentX].placedChildrenPositions.add(new Coord(nx, ny));
+                    // Recurse to next child
+                    if (tryPlaceChildren(grid, parentX, parentY, children, childIndex + 1)) {
+                        return true;
                     }
+                    // Backtrack this child if subtree failed
+                    backtrackChildPlacement(grid, nx, ny);
+                    grid[parentY][parentX].placedChildrenPositions.remove(new Coord(nx, ny));
                 }
-            }
-
-            if (!placed) {
-                grid[y][x] = null;
-                return false;
             }
         }
 
-        return true;
+        return false;  // No direction worked for this child
+    }
+
+    /**
+     * Recursively removes the given node's placement and all its descendants' placements.
+     */
+    private static void backtrackChildPlacement(LayoutField[][] grid, int x, int y) {
+        LayoutField field = grid[y][x];
+        if (field == null) {
+            return;
+        }
+
+        for (Coord pos : new ArrayList<>(field.placedChildrenPositions)) {
+            backtrackChildPlacement(grid, pos.getX(), pos.getY());
+        }
+
+        grid[y][x] = null;
     }
 
     private static LayoutField[][] trim(LayoutField[][] layout) {
@@ -85,23 +117,22 @@ public class LayoutGenerator {
         return trimmed;
     }
 
+    public static LayoutField[][] generateLayout(DungeonTree root, int max_retries) throws IllegalArgumentException {
+        int centerX = Constants.MAX_LAYOUT_WIDTH / 2;
+        int centerY = Constants.MAX_LAYOUT_HEIGHT / 2;
 
-    public static LayoutField[][] generateLayout(DungeonTree root) throws IllegalArgumentException{
-        LayoutField[][] grid = new LayoutField[Constants.MAX_LAYOUT_HEIGHT][Constants.MAX_LAYOUT_WIDTH];
-
-        int startX = Constants.MAX_LAYOUT_WIDTH / 2;
-        int startY = Constants.MAX_LAYOUT_HEIGHT / 2;
-
-        boolean success = generateLayout(root, grid, startX, startY, null);
-
-        if (!success) {
-            throw new IllegalArgumentException("Failed to generate layout, try again.");
+        for (int attempt = 0; attempt < max_retries; attempt++) {
+            LayoutField[][] grid = new LayoutField[Constants.MAX_LAYOUT_HEIGHT][Constants.MAX_LAYOUT_WIDTH];
+            if (generateLayout(root, grid, centerX, centerY, null)) {
+                return trim(grid);  // Success with this shuffle and root position
+            }
+            // If all root positions failed, retry with new shuffles (next attempt)
         }
 
-        return trim(grid);
+        throw new IllegalArgumentException("Failed to generate layout after " + max_retries + " retries with shuffling.");
     }
 
-//    ------------------ printer -----------------------
+    //    ------------------ printer -----------------------
     public static void printLayout(LayoutField[][] layout) {
         for (int y = 0; y < layout.length; y++) {
             for (int x = 0; x < layout[0].length; x++) {

@@ -4,23 +4,36 @@ import com.codingame.game.Constants;
 import com.codingame.game.game_objects.EnemyType;
 import com.codingame.game.move.Coord;
 import com.codingame.game.move.Direction;
+import com.codingame.game.tree.DungeonTree;
+import com.codingame.game.tree.DungeonTreeSerializer;
 import com.codingame.game.tree.NodeTypes;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class generates a dungeon layout from a given layout or dungeon tree.
+ * It handles the placement of rooms, corridors, and special elements like the player start,
+ * exit point, and enemies.
+ */
 public class GeneratorFromLayout extends Generator {
-    private final LayoutField[][] layout;
-    private Coord playerStart;
-    private Coord exitPoint;
-    private final Map<Coord, EnemyType> enemies = new HashMap<>();
-    private int[][] grid;
+    private final LayoutField[][] layout; // The layout of the dungeon as a 2D array of fields
+    private Coord playerStart; // The starting position of the player
+    private Coord exitPoint; // The exit point of the dungeon
+    private final Map<Coord, EnemyType> enemies = new HashMap<>(); // Map of enemy positions and their types
+    private int[][] grid; // The grid representation of the dungeon
 
-    private final int trimmedH;
-    private final int trimmedW;
-    private final int partitionWidth;
-    private final int partitionHeight;
+    private final int trimmedH; // Height of the trimmed layout
+    private final int trimmedW; // Width of the trimmed layout
+    private final int partitionWidth; // Width of each partition in the grid
+    private final int partitionHeight; // Height of each partition in the grid
 
+    /**
+     * Constructor for GeneratorFromLayout.
+     *
+     * @param layout The layout of the dungeon as a 2D array of LayoutField objects.
+     */
     public GeneratorFromLayout(LayoutField[][] layout) {
         this.layout = layout;
         trimmedH = layout.length;
@@ -29,11 +42,21 @@ public class GeneratorFromLayout extends Generator {
         partitionHeight = Constants.ROWS / trimmedH;
     }
 
-    // Converts layout coordinates to grid coordinates (left upper corner of the partition)
+    /**
+     * Converts layout coordinates to grid coordinates.
+     *
+     * @param layoutCoord The coordinates in the layout.
+     * @return The corresponding coordinates in the grid.
+     */
     private Coord toGridCoords(Coord layoutCoord) {
         return new Coord(layoutCoord.getX() * partitionWidth, layoutCoord.getY() * partitionHeight);
     }
 
+    /**
+     * Places a room in the grid at the specified top-left corner.
+     *
+     * @param leftUpperCorner The top-left corner of the room in the grid.
+     */
     private void placeRoom(Coord leftUpperCorner) {
         int startX = leftUpperCorner.getX() + Constants.WALL_OFFSET;
         int startY = leftUpperCorner.getY() + Constants.WALL_OFFSET;
@@ -47,6 +70,12 @@ public class GeneratorFromLayout extends Generator {
         }
     }
 
+    /**
+     * Places a corridor in the grid starting from the center and extending in the given direction.
+     *
+     * @param center    The starting point of the corridor.
+     * @param direction The direction in which the corridor extends.
+     */
     private void placeCorridor(Coord center, Direction direction) {
         int x = center.getX();
         int y = center.getY();
@@ -63,6 +92,10 @@ public class GeneratorFromLayout extends Generator {
         }
     }
 
+    /**
+     * Places all rooms in the grid based on the layout.
+     * Tracks special rooms like the player start, exit, and enemy positions.
+     */
     private void placeRooms() {
         grid = Generator.initialGridWalls(Constants.ROWS, Constants.COLUMNS);
 
@@ -90,6 +123,9 @@ public class GeneratorFromLayout extends Generator {
         }
     }
 
+    /**
+     * Places all corridors in the grid based on the layout.
+     */
     private void placeCorridors() {
         for (int y = 0; y < trimmedH; y++) {
             for (int x = 0; x < trimmedW; x++) {
@@ -107,16 +143,48 @@ public class GeneratorFromLayout extends Generator {
         }
     }
 
-    @Override
-    public GridDefinition generate(int rows, int columns) {
-        placeRooms();
-        placeCorridors();
+    // ----------------- API -----------------
+
+    /**
+     * Generates a dungeon grid from a DungeonTree.
+     *
+     * @param tree The DungeonTree to generate the dungeon from.
+     * @return A GridDefinition object representing the generated dungeon.
+     */
+    public static GridDefinition generate(DungeonTree tree, int maxRetries) {
+        LayoutField[][] layout = LayoutGenerator.generateLayout(tree, maxRetries);
+        LayoutGenerator.printLayout(layout);
+
+        GeneratorFromLayout generator = new GeneratorFromLayout(layout);
+
+        generator.placeRooms();
+        generator.placeCorridors();
 
         return GridDefinition.builder()
-                .grid(grid)
-                .playerStart(playerStart)
-                .exit(exitPoint)
-                .enemies(enemies)
+                .grid(generator.grid)
+                .playerStart(generator.playerStart)
+                .exit(generator.exitPoint)
+                .enemies(generator.enemies)
                 .build();
+    }
+
+    /**
+     * Generates a dungeon grid from a file.
+     *
+     * @param folder The name of the file containing the DungeonTree.
+     * @param x      The x coordinate of the layout file.
+     * @param y      The y coordinate of the layout file.
+     * @return A GridDefinition object representing the generated dungeon.
+     * @throws RuntimeException If the file cannot be read or the dungeon cannot be generated.
+     */
+    public static GridDefinition generate(String folder, int x, int y, int maxRetries) {
+        String filename = "levels/" + folder + "/x_" + String.format("%02d", x) + "_y_" + String.format("%02d", y) + ".json";
+        File file = new File(filename);
+        try {
+            DungeonTree tree = DungeonTreeSerializer.readFromFile(file);
+            return generate(tree, maxRetries);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate from file: " + filename, e);
+        }
     }
 }

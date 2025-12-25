@@ -31,10 +31,4 @@ public abstract class Generator {
         int y = min_y + (int) (Math.random() * (max_y - min_y));
         return new Coord(x, y);
     }
-
-    public abstract GridDefinition generate(int rows, int columns);
-
-    public GridDefinition generate() {
-        return generate(Constants.ROWS, Constants.COLUMNS);
-    }
 }

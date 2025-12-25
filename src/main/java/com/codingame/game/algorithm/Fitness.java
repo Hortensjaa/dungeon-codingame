@@ -1,7 +1,6 @@
 package com.codingame.game.algorithm;
 
 import com.codingame.game.Constants;
-import com.codingame.game.generator.LayoutField;
 import com.codingame.game.generator.LayoutGenerator;
 import com.codingame.game.tree.DungeonTree;
 import com.codingame.game.tree.NodeTypes;
@@ -16,6 +15,20 @@ public final class Fitness {
         int count = tree.countNodes();  // todo: rethink
         float value = (float) count / Constants.MAX_NODES;
         return 1.0f - Math.abs(value - 0.75f);
+    }
+
+    static float countGrandchildren(DungeonTree tree) {
+        List<DungeonTree> nodes = new ArrayList<>();
+        tree.collectNodes(nodes);
+
+        int penaltyCount = 0;
+        for (DungeonTree node : nodes) {
+            int grandchildCount = node.getGrandchildren().size();
+            penaltyCount += Math.abs(grandchildCount - 4);
+        }
+
+        float penalty = (float) penaltyCount / (float) (tree.countNodes() * 7);
+        return 1.0f - penalty;
     }
 
     // which part of the dungeon is on the main path from start to exit; should be ~50%
@@ -49,9 +62,9 @@ public final class Fitness {
         return (float) count / Constants.MAX_NODES;
     }
 
-    // should have start and exit todo: only one!!!!
-    static float hasStartAndExit(DungeonTree tree) {
-        if (tree.hasStartAndExit()) {
+    // should have start and exit
+    static float hasStartAndExitOnce(DungeonTree tree) {
+        if (tree.hasStartAndExitOnce()) {
             return 1.0f;
         } else {
             return 0.0f;
@@ -59,10 +72,18 @@ public final class Fitness {
     }
 
     static float canGenerateLayout(DungeonTree tree) {
-        try {
-            LayoutGenerator.generateLayout(tree);
-            return 1f;
-        } catch (IllegalArgumentException e) {
+        float successRate = 0f;
+        for (int i = 0; i < 5; i++) {
+            try {
+                LayoutGenerator.generateLayout(tree, 1);
+                successRate += 0.2f;
+            } catch (IllegalArgumentException e) {
+                // try again
+            }
+        }
+        if (successRate > 0.5f) {
+            return successRate;
+        } else {
             return 0f;
         }
     }
@@ -121,11 +142,11 @@ public final class Fitness {
     }
 
     private static float quality(DungeonTree tree) {
-        return (countNodes(tree) + startToExitPath(tree)) / 2;
+        return (countNodes(tree) + startToExitPath(tree) + countGrandchildren(tree)) / 3;
     }
 
     private static float control(DungeonTree tree) {
-        return min(hasStartAndExit(tree), checkGrandchildren(tree), countNodesControl(tree), canGenerateLayout(tree));
+        return min(hasStartAndExitOnce(tree), checkGrandchildren(tree), countNodesControl(tree), canGenerateLayout(tree));
     }
 
     // todo: find out a good way to compute diversity between two trees
