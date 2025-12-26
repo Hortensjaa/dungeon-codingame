@@ -58,22 +58,25 @@ The most important part will be the analysis of my generator and its outputs.
        - [.] killer: prefer fighting over dodging
        - [.] collector: maximise reward (if points added)
 - [ ] Implement hybrid dungeon generator in CodinGame SDK
-    - [ ] add fitness functions for generators
-        - [ ] quality
+    - [x] add fitness functions for generators
+        - [x] quality
         - [ ] diversity
-        - [ ] solvability by different agents
-    - [ ] Map-Elites
+        - [x] generation ability (control)
+    - [x] Map-Elites
     - [x] random tree + generator from tree
-        - [ ] diverse corridor shapes
-        - [ ] diverse room shapes
+        - [.] diverse corridor shapes
+        - [.] diverse room shapes
 - [ ] Add features to dungeons
     - [ ] enemies
         - [ ] implement onCollision() 
         - [x] just standing in place
         - [ ] movement paths
         - [.] different types
+    - [ ] rewards
+        - [ ] points
+        - [.] potions
     - [ ] dodging enemies with stamina
     - [.] fighting enemies with mana
     - [.] potions
     - [.] collectables
-- [ ] trees serialization (or save in json?)
+- [x] trees serialization (or save in json?)

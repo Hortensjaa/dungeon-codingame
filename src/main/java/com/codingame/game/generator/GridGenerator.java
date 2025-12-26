@@ -9,15 +9,14 @@ import com.codingame.game.tree.DungeonTreeSerializer;
 import com.codingame.game.tree.NodeTypes;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class generates a dungeon layout from a given layout or dungeon tree.
  * It handles the placement of rooms, corridors, and special elements like the player start,
  * exit point, and enemies.
  */
-public class GeneratorFromLayout extends Generator {
+public class GridGenerator extends Generator {
     private final LayoutField[][] layout; // The layout of the dungeon as a 2D array of fields
     private Coord playerStart; // The starting position of the player
     private Coord exitPoint; // The exit point of the dungeon
@@ -34,7 +33,7 @@ public class GeneratorFromLayout extends Generator {
      *
      * @param layout The layout of the dungeon as a 2D array of LayoutField objects.
      */
-    public GeneratorFromLayout(LayoutField[][] layout) {
+    public GridGenerator(LayoutField[][] layout) {
         this.layout = layout;
         trimmedH = layout.length;
         trimmedW = layout[0].length;
@@ -52,12 +51,39 @@ public class GeneratorFromLayout extends Generator {
         return new Coord(layoutCoord.getX() * partitionWidth, layoutCoord.getY() * partitionHeight);
     }
 
+    private void chooseCoords(int startX, int startY, int endX, int endY, HashSet<Coord> positions, int size) {
+        Random rand = new Random();
+        while (positions.size() < size) {
+            int x = rand.nextInt(endX - startX) + startX;
+            int y = rand.nextInt(endY - startY) + startY;
+            positions.add(new Coord(x, y));
+        }
+    }
+
+    private void fillRoom(int startX, int startY, int endX, int endY, float difficulty, float reward) {
+        int roomArea = (endX - startX) * (endY - startY);
+        int enemyCount = (int) (difficulty * roomArea * Constants.MAX_ENEMY_COVERAGE);
+        int treasuresCount = (int) (reward * roomArea  * Constants.MAX_REWARD_COVERAGE);
+
+        HashSet<Coord> positions = new HashSet<>();
+        chooseCoords(startX, startY, endX, endY, positions, enemyCount + treasuresCount);
+        List<Coord> positionsList = new ArrayList<>(positions);
+        for (int i = 0; i < enemyCount; i++) {
+            Coord pos = positionsList.get(i);
+            enemies.put(pos, EnemyType.FIRE);
+        }
+        for (int i = enemyCount; i < enemyCount + treasuresCount; i++) {
+            Coord pos = positionsList.get(i);
+            // place treasures later
+        }
+    }
+
     /**
      * Places a room in the grid at the specified top-left corner.
      *
      * @param leftUpperCorner The top-left corner of the room in the grid.
      */
-    private void placeRoom(Coord leftUpperCorner) {
+    private void placeRoom(Coord leftUpperCorner, float difficulty, float reward) {
         int startX = leftUpperCorner.getX() + Constants.WALL_OFFSET;
         int startY = leftUpperCorner.getY() + Constants.WALL_OFFSET;
         int endX = startX + partitionWidth - 2 * Constants.WALL_OFFSET;
@@ -68,6 +94,8 @@ public class GeneratorFromLayout extends Generator {
                 grid[y][x] = Constants.ROOM;
             }
         }
+
+        fillRoom(startX, startY, endX, endY, difficulty, reward);
     }
 
     /**
@@ -105,19 +133,16 @@ public class GeneratorFromLayout extends Generator {
                 if (field == null) continue;
 
                 Coord leftUpperCorner = toGridCoords(new Coord(x, y));
-                placeRoom(leftUpperCorner);
+                placeRoom(leftUpperCorner, field.type.getDifficulty(), field.type.getReward());
 
                 int centerX = leftUpperCorner.getX() + partitionWidth / 2;
                 int centerY = leftUpperCorner.getY() + partitionHeight / 2;
                 Coord center = new Coord(centerX, centerY);
-
                 // Track special rooms
                 if (field.type instanceof NodeTypes.Start) {
                     playerStart = center;
                 } else if (field.type instanceof NodeTypes.Exit) {
                     exitPoint = center;
-                } else if (field.type instanceof NodeTypes.Enemies) {
-                    enemies.put(center, EnemyType.FIRE);
                 }
             }
         }
@@ -155,7 +180,7 @@ public class GeneratorFromLayout extends Generator {
         LayoutField[][] layout = LayoutGenerator.generateLayout(tree, maxRetries);
         LayoutGenerator.printLayout(layout);
 
-        GeneratorFromLayout generator = new GeneratorFromLayout(layout);
+        GridGenerator generator = new GridGenerator(layout);
 
         generator.placeRooms();
         generator.placeCorridors();

@@ -3,13 +3,9 @@ package com.codingame.game;
 import java.util.Arrays;
 import java.util.List;
 
-import com.codingame.game.algorithm.MapElites;
-import com.codingame.game.algorithm.MapElitesArchive;
-import com.codingame.game.generator.GeneratorFromLayout;
 import com.codingame.game.generator.GridDefinition;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
-import com.codingame.game.tree.DungeonTree;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.SoloGameManager;
@@ -115,7 +111,7 @@ public class Referee extends AbstractReferee {
     public void init() {
         gameManager.setFrameDuration(100);
 
-        GridDefinition gridDefinition = GenerationUtils.generateFromFile("202512250146", 0 ,4);
+        GridDefinition gridDefinition = GenerationUtils.generateFromFile("Medium_rooms_5x3", 8 ,7);
 //        GridDefinition gridDefinition = GenerationUtils.runSaveAndGenerate(100_000);
         game = new DungeonGame(gridDefinition);
 

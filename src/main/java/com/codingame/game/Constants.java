@@ -17,15 +17,21 @@ public class Constants {
 //  grid constants (doesn't depend on CELL_SIZE)
     public static final int WALL_OFFSET = 1; // in cells
     public static final int CORRIDOR_WIDTH = 1; // in cells
-    public static final int MIN_ROOM_DIMENSION = 2;  // minimum room width and height in cells
-    public static final int MIN_PARTITION_DIMENSION = MIN_ROOM_DIMENSION + 2 * WALL_OFFSET; // minimum partition width and height in cells
+    public static final int MIN_ROOM_DIMENSION_X = 5; // minimum room width and height in cells
+    public static final int MIN_ROOM_DIMENSION_Y = 3;
+    public static final int MIN_PARTITION_WIDTH = MIN_ROOM_DIMENSION_X + 2 * WALL_OFFSET; // minimum partition width and height in cells
+    public static final int MIN_PARTITION_HEIGHT = MIN_ROOM_DIMENSION_Y + 2 * WALL_OFFSET; // minimum partition width and height in cells
 
 //    tree constants
-    public static final int MAX_LAYOUT_WIDTH = COLUMNS / MIN_PARTITION_DIMENSION;
-    public static final int MAX_LAYOUT_HEIGHT = ROWS / MIN_PARTITION_DIMENSION;
+    public static final int MAX_LAYOUT_WIDTH = COLUMNS / MIN_PARTITION_WIDTH;
+    public static final int MAX_LAYOUT_HEIGHT = ROWS / MIN_PARTITION_HEIGHT;
     public static final int MIN_DEPTH = 2;
     public static final int MAX_DEPTH = 5;
     public static final int MAX_NODES = MAX_LAYOUT_HEIGHT * MAX_LAYOUT_WIDTH;
+
+//    rooms constraints
+    public static final float MAX_ENEMY_COVERAGE = 0.25f;
+    public static final float MAX_REWARD_COVERAGE = 0.25f;
 
 //    sprites
     public static final String WALL_SPRITE = "assets/walls_32/tile_10.png";

@@ -10,13 +10,14 @@ import java.util.*;
 
 public final class Fitness {
     // ------------------ quality ------------------
-    // more -> better
+    // more -> better (up to 75% of max nodes)
     static float countNodes(DungeonTree tree) {
         int count = tree.countNodes();  // todo: rethink
         float value = (float) count / Constants.MAX_NODES;
         return 1.0f - Math.abs(value - 0.75f);
     }
 
+    // ideal is ~4 grandchildren per node, to avoid deep backtracking
     static float countGrandchildren(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
         tree.collectNodes(nodes);
@@ -30,6 +31,27 @@ public final class Fitness {
         float penalty = (float) penaltyCount / (float) (tree.countNodes() * 7);
         return 1.0f - penalty;
     }
+
+    static float nodesDiversity(DungeonTree tree) {
+        List<DungeonTree> nodes = new ArrayList<>();
+        tree.collectNodes(nodes);
+
+        Map<String, Integer> types = new HashMap<>();
+        for (DungeonTree node : nodes) {
+            types.put(node.getType().getName(), types.getOrDefault(node.getType().getName(), 0) + 1);
+        }
+
+        int sumOfSquares = types.values().stream()
+                .mapToInt(count -> count * count)
+                .sum();
+
+        int totalNodes = nodes.size();
+        float maxSum = (float) (totalNodes * totalNodes);
+        float minSum = (float) totalNodes;
+
+        return 1.0f - (sumOfSquares - minSum) / (maxSum - minSum);
+    }
+
 
     // which part of the dungeon is on the main path from start to exit; should be ~50%
     static float startToExitPath(DungeonTree tree) {
@@ -143,7 +165,12 @@ public final class Fitness {
     }
 
     private static float quality(DungeonTree tree) {
-        return (countNodes(tree) + startToExitPath(tree) + countGrandchildren(tree)) / 3;
+        return (
+                countNodes(tree)
+                + startToExitPath(tree)
+                + countGrandchildren(tree)
+                + nodesDiversity(tree)
+        ) / 4;
     }
 
     private static float control(DungeonTree tree) {
