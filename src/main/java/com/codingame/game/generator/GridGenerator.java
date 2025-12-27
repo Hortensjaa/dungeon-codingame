@@ -2,6 +2,8 @@ package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
 import com.codingame.game.game_objects.EnemyType;
+import com.codingame.game.game_objects.Reward;
+import com.codingame.game.game_objects.RewardType;
 import com.codingame.game.move.Coord;
 import com.codingame.game.move.Direction;
 import com.codingame.game.tree.DungeonTree;
@@ -21,6 +23,7 @@ public class GridGenerator extends Generator {
     private Coord playerStart; // The starting position of the player
     private Coord exitPoint; // The exit point of the dungeon
     private final Map<Coord, EnemyType> enemies = new HashMap<>(); // Map of enemy positions and their types
+    private final Map<Coord, RewardType> rewards = new HashMap<>(); // Map of rewards positions and their types
     private int[][] grid; // The grid representation of the dungeon
 
     private final int trimmedH; // Height of the trimmed layout
@@ -74,7 +77,7 @@ public class GridGenerator extends Generator {
         }
         for (int i = enemyCount; i < enemyCount + treasuresCount; i++) {
             Coord pos = positionsList.get(i);
-            // place treasures later
+            rewards.put(pos, RewardType.getRandom());
         }
     }
 
@@ -190,6 +193,7 @@ public class GridGenerator extends Generator {
                 .playerStart(generator.playerStart)
                 .exit(generator.exitPoint)
                 .enemies(generator.enemies)
+                .rewards(generator.rewards)
                 .build();
     }
 

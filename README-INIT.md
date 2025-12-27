@@ -53,8 +53,8 @@ The most important part will be the analysis of my generator and its outputs.
     - [x] Random
     - [x] Greedy
     - [x] A* (ignore enemies, minimalise path)
-       - [ ] consider enemies, minimalise risk
-       - [ ] consider enemies and dodging
+       - [x] consider enemies, minimalise risk
+       - [.] consider enemies and dodging
        - [.] killer: prefer fighting over dodging
        - [.] collector: maximise reward (if points added)
 - [ ] Implement hybrid dungeon generator in CodinGame SDK
@@ -67,13 +67,13 @@ The most important part will be the analysis of my generator and its outputs.
         - [.] diverse corridor shapes
         - [.] diverse room shapes
 - [ ] Add features to dungeons
-    - [ ] enemies
-        - [ ] implement onCollision() 
+    - [x] enemies
+        - [x] implement onCollision() 
         - [x] just standing in place
-        - [ ] movement paths
+        - [.] movement paths
         - [.] different types
-    - [ ] rewards
-        - [ ] points
+    - [x] rewards
+        - [x] points
         - [.] potions
     - [ ] dodging enemies with stamina
     - [.] fighting enemies with mana

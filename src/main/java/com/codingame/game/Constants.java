@@ -13,12 +13,14 @@ public class Constants {
     public static final int WALL = 0;
     public static final int ROOM = 1;
     public static final int CORRIDOR = 2;
+    public static final int ENEMY = 3;
+    public static final int REWARD = 4;
 
 //  grid constants (doesn't depend on CELL_SIZE)
     public static final int WALL_OFFSET = 1; // in cells
     public static final int CORRIDOR_WIDTH = 1; // in cells
-    public static final int MIN_ROOM_DIMENSION_X = 5; // minimum room width and height in cells
-    public static final int MIN_ROOM_DIMENSION_Y = 3;
+    public static final int MIN_ROOM_DIMENSION_X = 8; // minimum room width and height in cells
+    public static final int MIN_ROOM_DIMENSION_Y = 6;
     public static final int MIN_PARTITION_WIDTH = MIN_ROOM_DIMENSION_X + 2 * WALL_OFFSET; // minimum partition width and height in cells
     public static final int MIN_PARTITION_HEIGHT = MIN_ROOM_DIMENSION_Y + 2 * WALL_OFFSET; // minimum partition width and height in cells
 

@@ -2,6 +2,7 @@ package com.codingame.game.generator;
 
 import com.codingame.game.Constants;
 import com.codingame.game.game_objects.EnemyType;
+import com.codingame.game.game_objects.RewardType;
 import com.codingame.game.move.Coord;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,9 @@ public class GridDefinition {
 
     @Builder.Default
     private final Map<Coord, EnemyType> enemies = new HashMap<>();
+
+    @Builder.Default
+    private final Map<Coord, RewardType> rewards = new HashMap<>();
 
     // methods
     public int rows() {

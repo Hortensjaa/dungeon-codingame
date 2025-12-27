@@ -3,6 +3,8 @@ package com.codingame.game;
 import java.util.Arrays;
 import java.util.List;
 
+import com.codingame.game.game_objects.Enemy;
+import com.codingame.game.game_objects.Reward;
 import com.codingame.game.generator.GridDefinition;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
@@ -46,6 +48,7 @@ public class Referee extends AbstractReferee {
     private Sprite playerSprite;
     private Sprite goalSprite;
     private Sprite[] enemySprites;
+    private Sprite[] rewardsSprites;
 
     private void drawGrid(int[][] grid) {
         // Draw background color (floor color)
@@ -93,12 +96,27 @@ public class Referee extends AbstractReferee {
 
         enemySprites = new Sprite[game.getEnemies().size()];
         for (int i = 0; i < game.getEnemies().size(); i++) {
-            Coord enemyCoords = game.getEnemies().get(i).getPosition();
+            Coord coords = game.getEnemies().get(i).getPosition();
             enemySprites[i] = graphicEntityModule.createSprite()
                     .setImage(game.getEnemies().get(i).getCurrentSprite())
-                    .setX(toX(enemyCoords.getX()))
-                    .setY(toY(enemyCoords.getY()))
+                    .setX(toX(coords.getX()))
+                    .setY(toY(coords.getY()))
+                    .setZIndex(4);
+        }
+
+        rewardsSprites = new Sprite[game.getRewards().size()];
+        for (int i = 0; i < game.getRewards().size(); i++) {
+            Reward reward = game.getRewards().get(i);
+            Coord coords = reward.getPosition();
+            rewardsSprites[i] = graphicEntityModule.createSprite()
+                    .setImage(reward.getCurrentSprite())
+                    .setAnchorX(-0.5)
+                    .setAnchorY(-0.5)
+                    .setScale(0.5)
+                    .setX(toX(coords.getX()))
+                    .setY(toY(coords.getY()))
                     .setZIndex(3);
+            reward.setSprite(rewardsSprites[i]);
         }
     }
 
@@ -111,7 +129,7 @@ public class Referee extends AbstractReferee {
     public void init() {
         gameManager.setFrameDuration(100);
 
-        GridDefinition gridDefinition = GenerationUtils.generateFromFile("Medium_rooms_5x3", 8 ,7);
+        GridDefinition gridDefinition = GenerationUtils.generateFromFile("Large_rooms_8x6", 4, 5);
 //        GridDefinition gridDefinition = GenerationUtils.runSaveAndGenerate(100_000);
         game = new DungeonGame(gridDefinition);
 
@@ -128,10 +146,27 @@ public class Referee extends AbstractReferee {
         for (int y = 0; y < Constants.ROWS; y++) {
             StringBuilder row = new StringBuilder();
             for (int x = 0; x < Constants.COLUMNS; x++) {
-                row.append(grid[y][x]);
+                int cellValue = grid[y][x];
+
+                for (Enemy enemy : game.getEnemies()) {
+                    if (enemy.getPosition().getX() == x && enemy.getPosition().getY() == y) {
+                        cellValue = Constants.ENEMY;
+                        break;
+                    }
+                }
+
+                for (Reward reward : game.getRewards()) {
+                    if (reward.getPosition().getX() == x && reward.getPosition().getY() == y) {
+                        cellValue = Constants.REWARD;
+                        break;
+                    }
+                }
+
+                row.append(cellValue);
             }
             gameManager.getPlayer().sendInputLine(row.toString());
         }
+
     }
 
     /**
@@ -151,9 +186,14 @@ public class Referee extends AbstractReferee {
 
             game.move(action);
             updateView();
+            game.update();
 
             if (game.hasWon()) {
-                gameManager.winGame("Goal reached!");
+                StringBuilder sb = new StringBuilder();
+                sb.append("Exit reached in ").append(turn + 1).append(" turns.");
+                sb.append(System.lineSeparator());
+                sb.append("Score: ").append(game.getPlayer().getScore()).append(" points.");
+                gameManager.winGame(sb.toString());
             }
 
         } catch (TimeoutException e) {
@@ -171,6 +211,9 @@ public class Referee extends AbstractReferee {
         for (int i = 0; i < game.getEnemies().size(); i++) {
             enemySprites[i].setImage(game.getEnemies().get(i).getCurrentSprite());
         }
+
+        // Animacja nagród - nie iterujemy po game.getRewards() bo lista się zmniejsza
+        // Sprite jest ukrywany bezpośrednio w Reward.applyEffect()
     }
 
     private int toX(int x) {

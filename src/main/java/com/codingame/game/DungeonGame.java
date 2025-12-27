@@ -2,6 +2,7 @@ package com.codingame.game;
 
 import com.codingame.game.game_objects.Enemy;
 import com.codingame.game.game_objects.GamePlayer;
+import com.codingame.game.game_objects.Reward;
 import com.codingame.game.generator.GridDefinition;
 import com.codingame.game.move.Action;
 import com.codingame.game.move.Coord;
@@ -18,6 +19,7 @@ public class DungeonGame {
     private final GamePlayer player;
     private final Coord exit;
     private final List<Enemy> enemies;
+    private final List<Reward> rewards;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
@@ -26,6 +28,10 @@ public class DungeonGame {
         this.enemies = def.getEnemies().entrySet()
                 .stream()
                 .map(entry -> new Enemy(entry.getValue(), entry.getKey()))
+                .collect(Collectors.toList());
+        this.rewards = def.getRewards().entrySet()
+                .stream()
+                .map(entry -> new Reward(entry.getValue(), entry.getKey()))
                 .collect(Collectors.toList());
     }
 
@@ -38,6 +44,25 @@ public class DungeonGame {
         }
         return true;
     }
+
+    public void update() {
+        Coord playerPos = player.getPosition();
+
+        rewards.removeIf(reward -> {
+            if (reward.getPosition().equals(playerPos)) {
+                reward.applyEffect(player);
+                return true;
+            }
+            return false;
+        });
+
+        for (Enemy enemy : enemies) {
+            if (enemy.getPosition().equals(playerPos)) {
+                enemy.attack(player);
+            }
+        }
+    }
+
 
     public boolean hasWon() {
         return player.getPosition().equals(exit);
