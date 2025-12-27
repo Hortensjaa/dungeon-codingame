@@ -47,5 +47,13 @@ public enum Direction implements Move {
         java.util.Collections.shuffle(directions);
         return directions;
     }
+
+    public static boolean isVertical(Direction dir) {
+        return dir == UP || dir == DOWN;
+    }
+
+    public static boolean isHorizontal(Direction dir) {
+        return dir == LEFT || dir == RIGHT;
+    }
 }
 

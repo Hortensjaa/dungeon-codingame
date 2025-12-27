@@ -52,7 +52,6 @@ public final class Fitness {
         return 1.0f - (sumOfSquares - minSum) / (maxSum - minSum);
     }
 
-
     // which part of the dungeon is on the main path from start to exit; should be ~50%
     static float startToExitPath(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
@@ -175,11 +174,6 @@ public final class Fitness {
 
     private static float control(DungeonTree tree) {
         return min(hasStartAndExitOnce(tree), checkGrandchildren(tree), countNodesControl(tree), canGenerateLayout(tree));
-    }
-
-    // todo: find out a good way to compute diversity between two trees
-    private static float diversity(DungeonTree tree1, DungeonTree tree2) {
-        return 0;
     }
 
     public static float fitness(DungeonTree tree, boolean quality, boolean control) {

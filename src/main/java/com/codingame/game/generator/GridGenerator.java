@@ -159,15 +159,56 @@ public class GridGenerator extends Generator {
         int parent_x = x + direction.getDx() * partitionWidth;
         int parent_y = y + direction.getDy() * partitionHeight;
 
-        while (x >= 0 && x < Constants.COLUMNS && y >= 0 && y < Constants.ROWS) {
-            if (x == parent_x && y == parent_y) {
-                return;
+        if (Direction.isVertical(direction)) {
+            // move x to the side -> x1
+            int x1 = x + (int)(Math.random() * (partitionWidth - 1) * 0.5f) * (Math.random() > 0.5 ? 1 : -1);
+            while (x != x1) {
+                if (grid[y][x] == Constants.WALL) {
+                    grid[y][x] = Constants.CORRIDOR;
+                }
+                x += (int) Math.signum(x1 - x);
             }
-            if (grid[y][x] == Constants.WALL) {
-                grid[y][x] = Constants.CORRIDOR;
+            // move vertically
+            while (y >= 0 && y < Constants.ROWS) {
+                if (y == parent_y) {
+                    return;
+                }
+                if (grid[y][x] == Constants.WALL) {
+                    grid[y][x] = Constants.CORRIDOR;
+                }
+                y += direction.getDy();
             }
-            x += direction.getDx();
-            y += direction.getDy();
+            // move x back to center
+            while (x != parent_x) {
+                if (grid[y][x] == Constants.WALL) {
+                    grid[y][x] = Constants.CORRIDOR;
+                }
+                x += (int) Math.signum(parent_x - x);
+            }
+        } else {
+            int y1 = y + (int)(Math.random() * (partitionHeight - 1) * 0.5f) * (Math.random() > 0.5 ? 1 : -1);
+            while (y != y1) {
+                if (grid[y][x] == Constants.WALL) {
+                    grid[y][x] = Constants.CORRIDOR;
+                }
+                y += (int) Math.signum(y1 - y);
+            }
+            // move horizontally
+            while (x >= 0 && x < Constants.COLUMNS) {
+                if (x == parent_x) {
+                    return;
+                }
+                if (grid[y][x] == Constants.WALL) {
+                    grid[y][x] = Constants.CORRIDOR;
+                }
+                x += direction.getDx();
+            }
+            while (y != parent_y) {
+                if (grid[y][x] == Constants.WALL) {
+                    grid[y][x] = Constants.CORRIDOR;
+                }
+                y += (int) Math.signum(parent_y - y);
+            }
         }
     }
 
