@@ -23,7 +23,7 @@ public class Constants {
     public static final int MIN_ROOM_DIMENSION_Y = 6;
     public static final int MIN_PARTITION_WIDTH = MIN_ROOM_DIMENSION_X + 2 * WALL_OFFSET; // minimum partition width and height in cells
     public static final int MIN_PARTITION_HEIGHT = MIN_ROOM_DIMENSION_Y + 2 * WALL_OFFSET; // minimum partition width and height in cells
-
+    public static final int IRREGULAR_ROOM_THRESHOLD = 40;
 //    tree constants
     public static final int MAX_LAYOUT_WIDTH = COLUMNS / MIN_PARTITION_WIDTH;
     public static final int MAX_LAYOUT_HEIGHT = ROWS / MIN_PARTITION_HEIGHT;

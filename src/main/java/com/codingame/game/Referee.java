@@ -211,9 +211,6 @@ public class Referee extends AbstractReferee {
         for (int i = 0; i < game.getEnemies().size(); i++) {
             enemySprites[i].setImage(game.getEnemies().get(i).getCurrentSprite());
         }
-
-        // Animacja nagród - nie iterujemy po game.getRewards() bo lista się zmniejsza
-        // Sprite jest ukrywany bezpośrednio w Reward.applyEffect()
     }
 
     private int toX(int x) {
