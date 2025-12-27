@@ -16,7 +16,6 @@ What might be done quick, and probably will be done in January:
 1. Moving enemies
 2. Different room shapes (for bigger rooms)
 3. Different corridor shapes
-4. Better placement of enemies and rewards (not fully random)
 
 ## What will be done (but not sure if in project or thesis)?
 1. More player's actions (dodging, fighting)
