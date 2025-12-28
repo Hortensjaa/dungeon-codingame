@@ -98,7 +98,13 @@ public class Referee extends AbstractReferee {
         for (int i = 0; i < game.getEnemies().size(); i++) {
             Coord coords = game.getEnemies().get(i).getPosition();
             enemySprites[i] = graphicEntityModule.createSprite()
-                    .setImage(game.getEnemies().get(i).getCurrentSprite())
+                    .setImage(game.getEnemies().get(i).getCurrentSprite());
+
+            if (game.getEnemies().get(i).getAction() != Action.STAY) {
+                // golem image
+                enemySprites[i].setAnchorX(0.25).setAnchorY(0.25);
+            }
+            enemySprites[i]
                     .setX(toX(coords.getX()))
                     .setY(toY(coords.getY()))
                     .setZIndex(4);
@@ -129,7 +135,9 @@ public class Referee extends AbstractReferee {
     public void init() {
         gameManager.setFrameDuration(100);
 
-        GridDefinition gridDefinition = GenerationUtils.generateFromFile("Large_rooms_8x6", 4, 5);
+        GridDefinition gridDefinition = GenerationUtils.generateFromFile("Large_rooms_8x6", 8, 8);
+        System.out.println("Enemies: " + gridDefinition.getEnemies().size());
+        System.out.println("Rewards: " + gridDefinition.getRewards().size());
 //        GridDefinition gridDefinition = GenerationUtils.runSaveAndGenerate(100_000);
         game = new DungeonGame(gridDefinition);
 
@@ -209,8 +217,13 @@ public class Referee extends AbstractReferee {
                 .setY(toY(p.getY()), Curve.LINEAR);
 
         for (int i = 0; i < game.getEnemies().size(); i++) {
-            enemySprites[i].setImage(game.getEnemies().get(i).getCurrentSprite());
+            Enemy enemy = game.getEnemies().get(i);
+            enemySprites[i]
+                    .setImage(enemy.getCurrentSprite())
+                    .setX(toX(enemy.getPosition().getX()), Curve.EASE_IN_AND_OUT)
+                    .setY(toY(enemy.getPosition().getY()), Curve.EASE_IN_AND_OUT);
         }
+
     }
 
     private int toX(int x) {

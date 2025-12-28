@@ -57,6 +57,11 @@ public class DungeonGame {
         });
 
         for (Enemy enemy : enemies) {
+            Coord next = enemy.move(enemy.getAction());
+            if (isOutOfBounds(next) || !isRoom(next)) {
+                enemy.undoMove();
+                enemy.setAction(enemy.getAction().opposite());
+            }
             if (enemy.getPosition().equals(playerPos)) {
                 enemy.attack(player);
             }
@@ -76,5 +81,9 @@ public class DungeonGame {
 
     private boolean isWall(Coord c) {
         return grid[c.getY()][c.getX()] == Constants.WALL;
+    }
+
+    private boolean isRoom(Coord c) {
+        return grid[c.getY()][c.getX()] == Constants.ROOM;
     }
 }

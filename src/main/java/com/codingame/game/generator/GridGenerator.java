@@ -91,12 +91,15 @@ public class GridGenerator extends Generator {
 
         List<Coord> picks = sampleCoords(roomTiles, enemyCount + rewardCount);
 
-        for (int i = 0; i < enemyCount; i++) {
-            enemies.put(picks.get(i), EnemyType.FIRE);
+        int i = 0;
+        while (i < enemyCount) {
+            EnemyType type = EnemyType.getRandom();
+            enemies.put(picks.get(i), type);
+            i += type.getSeverity();
         }
 
-        for (int i = enemyCount; i < enemyCount + rewardCount; i++) {
-            rewards.put(picks.get(i), RewardType.getRandom());
+        for (int j = enemyCount; j < enemyCount + rewardCount; j++) {
+            rewards.put(picks.get(j), RewardType.getRandom());
         }
     }
 
@@ -161,9 +164,9 @@ public class GridGenerator extends Generator {
 
         if (Direction.isVertical(direction)) {
             // move x to the side -> x1
-            int x1 = x + (int)(Math.random() * (partitionWidth - 1) * 0.5f) * (Math.random() > 0.5 ? 1 : -1);
+            int x1 = x + (int)(Math.random() * (partitionWidth - 2) * 0.5f) * (Math.random() > 0.5 ? 1 : -1);
             while (x != x1) {
-                if (grid[y][x] == Constants.WALL) {
+                if (grid[y][x] != Constants.ROOM) {
                     grid[y][x] = Constants.CORRIDOR;
                 }
                 x += (int) Math.signum(x1 - x);
@@ -171,7 +174,7 @@ public class GridGenerator extends Generator {
             // move vertically
             while (y >= 0 && y < Constants.ROWS) {
                 if (y == parent_y) {
-                    return;
+                    break;
                 }
                 if (grid[y][x] == Constants.WALL) {
                     grid[y][x] = Constants.CORRIDOR;
@@ -186,7 +189,7 @@ public class GridGenerator extends Generator {
                 x += (int) Math.signum(parent_x - x);
             }
         } else {
-            int y1 = y + (int)(Math.random() * (partitionHeight - 1) * 0.5f) * (Math.random() > 0.5 ? 1 : -1);
+            int y1 = y + (int)(Math.random() * (partitionHeight - 2) * 0.5f) * (Math.random() > 0.5 ? 1 : -1);
             while (y != y1) {
                 if (grid[y][x] == Constants.WALL) {
                     grid[y][x] = Constants.CORRIDOR;
@@ -196,7 +199,7 @@ public class GridGenerator extends Generator {
             // move horizontally
             while (x >= 0 && x < Constants.COLUMNS) {
                 if (x == parent_x) {
-                    return;
+                    break;
                 }
                 if (grid[y][x] == Constants.WALL) {
                     grid[y][x] = Constants.CORRIDOR;
