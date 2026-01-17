@@ -1,8 +1,7 @@
 # Procedural Content Generation of Dungeons in Roguelike Games
 
-
 > [!WARNING]  
-> New repo containing code migrated from CodingameSDK to standalone LibGDX project: https://github.com/Hortensjaa/DungeonGame/edit/master/README.md
+> New repo containing code migrated from CodinGameSDK to standalone LibGDX project: https://github.com/Hortensjaa/DungeonGame
 
 ## Overview and Goals
 
