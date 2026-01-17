@@ -1,5 +1,8 @@
 # MVP
 
+> [!WARNING]  
+> New repo containing code migrated from CodinGameSDK to standalone LibGDX project: https://github.com/Hortensjaa/DungeonGame
+
 ## What have been done in MVP? (27.12.2025)
 1. Generator is implemented as hybrid of MAP-Elites for behavioral tree creation + constructive methods 
 (explained in [main README](/README.md)).
@@ -13,10 +16,9 @@ with different room sizes (to check scalability)
 
 ### Small "nice-to-have's"
 What might be done quick, and probably will be done in January:
-1. Moving enemies
-2. Different room shapes (for bigger rooms)
-3. Different corridor shapes
+1. [x] Moving enemies
+2. [x] Different room shapes (for bigger rooms)
+3. [x] Different corridor shapes
 
 ## What will be done (but not sure if in project or thesis)?
-1. More player's actions (dodging, fighting)
-2. Move game from CodinGame to standalone using LibGDX or JavaFX
+1. [ ] Better logic of room creation than random placement of enemies and rewards
