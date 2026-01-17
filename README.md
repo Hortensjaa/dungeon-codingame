@@ -1,5 +1,9 @@
 # Procedural Content Generation of Dungeons in Roguelike Games
 
+
+> [!WARNING]  
+> New repo containing code migrated from CodingameSDK to standalone LibGDX project: https://github.com/Hortensjaa/DungeonGame/edit/master/README.md
+
 ## Overview and Goals
 
 Creating compelling levels in roguelike games is challenging, as they need to be:
